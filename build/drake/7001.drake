@@ -1,0 +1,13 @@
+pm-enable admin_menu
+pm-enable backup_migrate
+pm-enable views
+pm-enable views_ui
+pm-enable features
+pm-enable imce
+pm-enable ckeditor
+pm-enable token
+pm-enable webform
+pm-enable honeypot
+pm-enable flag
+pm-enable devel
+pm-enable ds

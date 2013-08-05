@@ -1,0 +1,9 @@
+project.make.file=build.make
+project.drupal.dir=project
+project.drupal.admin.name=admin
+project.drupal.admin.password=admin
+project.drupal.admin.mail=admin@admin.com
+project.drupal.locale=en
+project.drupal.clean_url=0
+project.drupal.site.name=Dev
+project.drupal.site.mail=site@admin.com

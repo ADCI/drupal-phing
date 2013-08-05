@@ -1,0 +1,109 @@
+<project name="phing_test" default="make">
+
+  <property file="build/properties/project.prop"/>
+  <property file="build/properties/env.prop"/>
+  
+  <taskdef name="drush" classpath="build" classname="DrushTask"/>
+
+  <target name="build" depends="make, install">
+    <echo>Project successfuly built.</echo>
+  </target>
+  
+  <target name="install" depends="db_drop, db_create" description="Install site">
+    <echo>Project installation started</echo>
+    <drush command="site-install" assume="yes">
+      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="db-url">${env.db.driver}://${env.db.user}:${env.db.password}@${env.db.host}/${env.db.name}</option>
+      <option name="db-su">${env.db.user.sudo}</option>
+      <option name="db-su-pw">${env.db.user.sudo.password}</option>
+      <option name="account-name">${project.drupal.admin.name}</option>
+      <option name="account-pass">${project.drupal.admin.password}</option>
+      <option name="account-mail">${project.drupal.admin.mail}</option>
+      <option name="locale">${project.drupal.locale}</option>
+      <option name="clean-url">${project.drupal.clean_url}</option>
+      <option name="site-name">${project.drupal.site.name}</option>
+      <option name="site-mail">${project.drupal.site.mail}</option>
+      <param>standard</param>
+    </drush>
+    <phingcall target="drake_install"/>
+    <echo>Project installation finished</echo>
+  </target>
+
+  <target name="make" depends="clear">
+    <echo>Drupal make run</echo>
+    <drush command="make" assume="yes">
+      <param>${project.make.file}</param>
+      <param>${project.drupal.dir}</param>
+    </drush>
+    <chmod mode="0777" failonerror="false">
+      <fileset dir="${project.drupal.dir}">
+        <include name="sites/default/files"/>
+      </fileset>
+    </chmod>
+  </target>
+  
+  <target name="db_create">
+    <echo>Create project database</echo>
+    <pdo url="${env.db.driver}:host=${env.db.host}" userId="${env.db.user.sudo}" password="${env.db.user.sudo.password}" onerror="abort">
+      CREATE DATABASE ${env.db.name};
+    </pdo>
+  </target>
+  
+  <target name="db_drop">
+    <echo>Drop project database</echo>
+    <pdo url="${env.db.driver}:host=${env.db.host}" userId="${env.db.user.sudo}" password="${env.db.user.sudo.password}" onerror="abort">
+      DROP DATABASE IF EXISTS ${env.db.name};
+    </pdo>
+  </target>
+  
+  <target name="drop" depends="clear, db_drop">
+    <echo>Project dropped</echo>
+  </target>
+  
+  <target name="clear">
+    <echo>Clear workspace</echo>
+    <if>
+      <available file="${project.drupal.dir}" property="dir_exists"/>
+      <then>
+        <chmod mode="0777" quiet="true" failonerror="false">
+          <fileset dir="${project.drupal.dir}">
+            <include name="sites/*"/>
+          </fileset>
+        </chmod>
+        <delete dir="${project.drupal.dir}"/>
+      </then>
+    </if>
+    <property name="project.cleaned" value="true"/>
+  </target>
+  
+  <target name="drake_install" description="Install drake migration">
+    <drush command="pm-enable" assume="yes">
+      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <param>views_ui, admin_menu, honeypot, features, webform, devel, ds, backup_migrate, token, ckeditor</param>
+    </drush>
+    <drush command="pm-disable" assume="yes">
+      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <param>overlay, toolbar, color, help, rdf, shortcut</param>
+    </drush>
+    <phingcall target="flush_cache"/>
+  </target>
+  
+  <target name="flush_cache">
+    <drush command="cc" assume="yes">
+      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <param>all</param>
+    </drush>
+  </target>
+  
+  <target name="run_tests">
+    <drush command="pm-enable" assume="yes">
+      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <param>simpletest</param>
+    </drush>
+    <drush command="test-run" assume="yes">
+      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <param>--all</param>
+    </drush>
+  </target>
+  
+</project>
