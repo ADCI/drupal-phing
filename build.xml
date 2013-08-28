@@ -5,6 +5,8 @@
   
   <taskdef name="drush" classpath="build" classname="DrushTask"/>
 
+  <import file="${env.dir}${env.submodules.dir}/drupal/build.xml"/>
+
   <target name="build" depends="make, install">
     <echo>Project successfuly built.</echo>
   </target>
@@ -79,31 +81,13 @@
   <target name="drake_install" description="Install drake migration">
     <drush command="pm-enable" assume="yes">
       <option name="root">${env.dir}${project.drupal.dir}</option>
-      <param>views_ui, admin_menu, honeypot, features, webform, devel, ds, backup_migrate, token, ckeditor</param>
+      <param>admin_menu, devel</param>
     </drush>
     <drush command="pm-disable" assume="yes">
       <option name="root">${env.dir}${project.drupal.dir}</option>
       <param>overlay, toolbar, color, help, rdf, shortcut</param>
     </drush>
     <phingcall target="flush_cache"/>
-  </target>
-  
-  <target name="flush_cache">
-    <drush command="cc" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
-      <param>all</param>
-    </drush>
-  </target>
-  
-  <target name="run_tests">
-    <drush command="pm-enable" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
-      <param>simpletest</param>
-    </drush>
-    <drush command="test-run" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
-      <param>--all</param>
-    </drush>
   </target>
   
 </project>
