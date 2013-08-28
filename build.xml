@@ -6,6 +6,7 @@
   <taskdef name="drush" classpath="build" classname="DrushTask"/>
 
   <import file="${env.dir}${env.submodules.dir}/drupal/build.xml"/>
+  <import file="${env.dir}${env.submodules.dir}/backup/build.xml"/>
 
   <target name="build" depends="make, install">
     <echo>Project successfuly built.</echo>

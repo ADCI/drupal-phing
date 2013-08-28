@@ -7,23 +7,6 @@
     </drush>
   </target>
   
-  <target name="backup-sql">
-    <phingcall target="cc"/>
-    <if>
-      <not>
-        <available file="{env.dir}${env.backup.dir}"/>
-      </not>
-      <then>
-        <mkdir dir="${env.dir}${env.backup.dir}" mode="0777"/>
-      </then>
-    </if>
-    <tstamp/>
-    <drush command="sql-dump" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
-      <option name="result-file">${env.dir}${env.backup.dir}/${DSTAMP}-${TSTAMP}.sql</option>
-    </drush>
-  </target>
-  
   <target name="run_tests">
     <drush command="pm-enable" assume="yes">
       <option name="root">${env.dir}${project.drupal.dir}</option>
@@ -46,16 +29,16 @@
     </drush>      
     <drush command="language-add" assume="yes">
       <option name="root">${env.dir}${project.drupal.dir}</option>
-      <param>ru</param>
+      <param>${project.drupal.locale}</param>
     </drush> 
     <phingcall target="flush_cache"/>
     <drush command="language-enable" assume="yes">
       <option name="root">${env.dir}${project.drupal.dir}</option>
-      <param>ru</param> 
+      <param>${project.drupal.locale}</param> 
     </drush>
     <drush command="language-default" assume="yes">
       <option name="root">${env.dir}${project.drupal.dir}</option>
-      <param>ru</param>
+      <param>${project.drupal.locale}</param>
     </drush>
     <drush command="l10n-update" assume="yes">
       <option name="root">${env.dir}${project.drupal.dir}</option>

@@ -1,0 +1,41 @@
+<project name="backup">
+  
+  <target name="backup" depends="backup-sql, backup-custom, backup-theme">
+  </target>
+  
+  <target name="backup-sql" depends="backup-dir-init">
+    <phingcall target="cc"/>
+    <tstamp/>
+    <drush command="sql-dump" assume="yes">
+      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="result-file">${env.dir}${env.backup.dir}/${DSTAMP}-${TSTAMP}.sql</option>
+    </drush>
+  </target>
+  
+  <target name="backup-custom" depends="backup-dir-init">
+    <copy todir="${env.dir}${env.backup.dir}/custom">
+      <fileset dir="${env.dir}${project.drupal.dir}/sites/all/modules/custom">
+        <include name="**"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="backup-theme" depends="backup-dir-init">
+    <copy todir="${env.dir}${env.backup.dir}/theme">
+      <fileset dir="${env.dir}${project.drupal.dir}/sites/all/themes">
+        <include name="**"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="backup-dir-init">
+    <if>
+      <not>
+        <available file="{env.dir}${env.backup.dir}"/>
+      </not>
+      <then>
+        <mkdir dir="${env.dir}${env.backup.dir}" mode="0777"/>
+      </then>
+    </if>
+  </target>
+</project>
