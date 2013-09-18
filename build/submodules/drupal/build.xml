@@ -31,7 +31,7 @@
       <option name="root">${env.dir}${project.drupal.dir}</option>
       <param>${project.drupal.locale}</param>
     </drush> 
-    <phingcall target="flush_cache"/>
+    <phingcall target="cc"/>
     <drush command="language-enable" assume="yes">
       <option name="root">${env.dir}${project.drupal.dir}</option>
       <param>${project.drupal.locale}</param> 
