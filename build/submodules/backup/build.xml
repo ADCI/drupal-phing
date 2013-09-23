@@ -1,24 +1,22 @@
 <project name="backup">
   
+  <property name="backup.dir" value="${env.backup.dir}"/>
+  
+  <target name="backup" depends="sql-dump, backup-custom, backup-theme">
+  </target>
+  
   <target name="dump">
+    <property name="backup.dir" value="project" override="TRUE"/>
+    <phingcall target="sql-dump"/>
+  </target>
+  
+  <target name="sql-dump">
     <phingcall target="cc"/>
     <tstamp/>
     <drush command="sql-dump" assume="yes">
       <option name="root">${env.dir}${project.drupal.dir}</option>
       <option name="gzip"></option>
-      <option name="result-file">${env.dir}${project.drupal.dir}/${DSTAMP}-${TSTAMP}.sql</option>
-    </drush>
-  </target>
-  
-  <target name="backup" depends="backup-sql, backup-custom, backup-theme">
-  </target>
-  
-  <target name="backup-sql" depends="backup-dir-init">
-    <phingcall target="cc"/>
-    <tstamp/>
-    <drush command="sql-dump" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
-      <option name="result-file">${env.dir}${env.backup.dir}/${DSTAMP}-${TSTAMP}.sql</option>
+      <option name="result-file">${env.dir}${backup.dir}/${DSTAMP}-${TSTAMP}.sql</option>
     </drush>
   </target>
   
