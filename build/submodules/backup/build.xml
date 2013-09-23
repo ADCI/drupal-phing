@@ -1,5 +1,15 @@
 <project name="backup">
   
+  <target name="dump">
+    <phingcall target="cc"/>
+    <tstamp/>
+    <drush command="sql-dump" assume="yes">
+      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="gzip"></option>
+      <option name="result-file">${env.dir}${project.drupal.dir}/${DSTAMP}-${TSTAMP}.sql</option>
+    </drush>
+  </target>
+  
   <target name="backup" depends="backup-sql, backup-custom, backup-theme">
   </target>
   
