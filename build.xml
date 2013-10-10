@@ -2,11 +2,14 @@
 
   <property file="build/properties/project.prop"/>
   <property file="build/properties/env.prop"/>
+  <property file="build/properties/repo.prop"/>
   
   <taskdef name="drush" classpath="build" classname="DrushTask"/>
 
   <import file="${env.dir}${env.submodules.dir}/drupal/build.xml"/>
+  <import file="${env.dir}${env.submodules.dir}/repo/build.xml"/>
   <import file="${env.dir}${env.submodules.dir}/backup/build.xml"/>
+  <import file="${env.dir}${env.submodules.dir}/project/build.xml"/>
 
   <target name="build" depends="make, install">
     <echo>Project successfuly built.</echo>

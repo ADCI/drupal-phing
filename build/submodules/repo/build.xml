@@ -1,0 +1,9 @@
+<project name="repo">
+  <target name="pull">
+    <gitpull 
+      repository="${env.dir}${project.drupal.dir}"
+      source="origin"
+      refspec="${repo.branch}"
+    />
+  </target>
+</project>

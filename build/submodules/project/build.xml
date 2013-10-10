@@ -1,4 +1,6 @@
 <project name="project">
   <!-- PROJECT SPECIFIED TARGETS -->
+  <target name="pull-deploy" depends="sql-dump, pull, cc">
+  </target>
 
 </project>
