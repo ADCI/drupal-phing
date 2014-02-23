@@ -2,54 +2,108 @@
   
   <target name="cc">
     <drush command="cc" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="root">${project.drupal.dir}</option>
       <param>all</param>
     </drush>
   </target>
   
   <target name="run_tests">
     <drush command="pm-enable" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="root">${project.drupal.dir}</option>
       <param>simpletest</param>
     </drush>
     <drush command="test-run" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="root">${project.drupal.dir}</option>
       <param>--all</param>
     </drush>
   </target>
   
   <target name="localize">
     <drush command="dl" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="root">${project.drupal.dir}</option>
       <param>l10n_update, drush_language</param>
     </drush>    
     <drush command="en" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="root">${project.drupal.dir}</option>
       <param>l10n_update</param>
     </drush>      
     <drush command="language-add" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="root">${project.drupal.dir}</option>
       <param>${project.drupal.locale}</param>
     </drush> 
     <phingcall target="cc"/>
     <drush command="language-enable" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="root">${project.drupal.dir}</option>
       <param>${project.drupal.locale}</param> 
     </drush>
     <drush command="language-default" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="root">${project.drupal.dir}</option>
       <param>${project.drupal.locale}</param>
     </drush>
     <drush command="l10n-update" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="root">${project.drupal.dir}</option>
     </drush>
   </target>
-  
+
   <target name="clean-urls-disable">
+    <echo msg="Disable clean-urls" />
     <drush command="vset" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="root">${project.drupal.dir}</option>
       <param>clean_url 0 --yes</param>
-    </drush>  
+    </drush>
+  </target>
+
+  <target name="modules-enable">
+    <echo msg="Custom modules installation" />
+    <drush command="pm-enable" assume="yes">
+      <option name="root">${project.drupal.dir}</option>
+      <param>${projects.installable}</param>
+    </drush>
+    <phingcall target="cc" />
+  </target>
+
+  <target name="install-default-theme">
+    <echo msg="Default theme installation" />
+    <drush command="vset" assume="yes">
+      <option name="root">${project.drupal.dir}</option>
+      <param>theme_default ${project.drupal.theme.default}</param>
+    </drush>
+  </target>
+
+  <target name="configure-settings-file" depends="delete-settings-file, copy-settings-file" description="Configure settings.php">
+    <echo msg="Configure settings.php" />
+  </target>
+
+  <target name="delete-settings-file" description="Delete settings file if it is existing">
+    <if>
+      <available file="${project.drupal.settings.dir}/${project.drupal.settings.file}" />
+      <then>
+        <delete file="${project.drupal.settings.dir}/${project.drupal.settings.file}" quiet='true' />
+        <echo msg="Delete settings.php file" />
+      </then>
+    </if>
+  </target>
+
+  <target name="copy-settings-file" description="Copy settings file if it is existing">
+    <echo msg="Copy settings.php file" />
+    <copy file="${env.files.dir}/${project.drupal.settings.file}"
+          tofile="${project.drupal.settings.dir}/${project.drupal.settings.file}"
+          overwrite="true">
+      <filterchain>
+        <replacetokens begintoken="@" endtoken="@">
+          <token key="db_name" value="${env.db.name}" />
+          <token key="db_username" value="${env.db.user}" />
+          <token key="db_password" value="${env.db.password}" />
+          <token key="db_host" value="${env.db.host}" />
+        </replacetokens>
+      </filterchain>
+    </copy>
+  </target>
+
+  <target name="patches-apply">
+    <exec command="patch -p0 -i ${env.patches.dir}/node-export-fid-import.patch" />
+    <exec command="patch -p0 -i ${env.patches.dir}/node_export_dependency_exntity_reference.patch" />
+    <exec command="patch -p0 -i ${env.patches.dir}/ctools_automodal_from_insurance.patch" />
   </target>
   
 </project>

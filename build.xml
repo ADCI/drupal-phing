@@ -1,4 +1,4 @@
-<project name="phing_test" default="make">
+<project name="phing_test" default="init">
 
   <property file="build/properties/project.prop"/>
   <property file="build/properties/env.prop"/>
@@ -6,19 +6,43 @@
   
   <taskdef name="drush" classpath="build" classname="DrushTask"/>
 
-  <import file="${env.dir}${env.submodules.dir}/drupal/build.xml"/>
-  <import file="${env.dir}${env.submodules.dir}/repo/build.xml"/>
-  <import file="${env.dir}${env.submodules.dir}/backup/build.xml"/>
-  <import file="${env.dir}${env.submodules.dir}/project/build.xml"/>
+  <import file="build/submodules/drupal/build.xml"/>
+  <import file="build/submodules/repo/build.xml"/>
+  <import file="build/submodules/backup/build.xml"/>
+  <import file="build/submodules/restore/build.xml"/>
+  <import file="build/submodules/project/build.xml"/>
+  <import file="build/submodules/db/build.xml"/>
+  <import file="build/submodules/code_sniffer/build.xml"/>
 
-  <target name="build" depends="make, install">
-    <echo>Project successfuly built.</echo>
-  </target>
-  
-  <target name="install" depends="db_drop, db_create" description="Install site">
+  <target name="init" />
+
+  <target name="build" depends="drush-make, configure-settings-file, site-install" />
+
+  <target name="site-install" depends="db-drop, db-create, restore-custom-modules, restore-features-modules, restore-custom-themes, restore-project-files" description="Install site">
     <echo>Project installation started</echo>
+    <phingcall target="drush-install" />
+    <phingcall target="switch-modules"/>
+    <phingcall target="add-permission" />
+    <phingcall target="patches-apply" />
+    <phingcall target="modules-enable">
+      <property name="projects.installable" value="${project.drupal.module.custom}" />
+    </phingcall>
+    <phingcall target="modules-enable">
+      <property name="projects.installable" value="${project.drupal.theme.custom}" />
+    </phingcall>
+    <phingcall target="install-default-theme" />
+    <phingcall target="cc" />
+    <phingcall target="modules-enable">
+      <property name="projects.installable" value="${project.drupal.module.settings}" />
+    </phingcall>
+    <!--<phingcall target="restore-template-nodes" />-->
+    <phingcall target="restore-nodes" />
+    <echo>Project installation finished</echo>
+  </target>
+
+  <target name="drush-install">
     <drush command="site-install" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="root">${project.drupal.dir}</option>
       <option name="db-url">${env.db.driver}://${env.db.user}:${env.db.password}@${env.db.host}/${env.db.name}</option>
       <option name="db-su">${env.db.user.sudo}</option>
       <option name="db-su-pw">${env.db.user.sudo.password}</option>
@@ -31,12 +55,11 @@
       <option name="site-mail">${project.drupal.site.mail}</option>
       <param>standard</param>
     </drush>
-    <phingcall target="drake_install"/>
-    <echo>Project installation finished</echo>
+    <echo msg="Drupal is installed!" />
   </target>
 
-  <target name="make" depends="clear">
-    <echo>Drupal make run</echo>
+  <target name="drush-make" depends="clear">
+    <echo msg="Drupal make run" />
     <drush command="make" assume="yes">
       <param>${project.make.file}</param>
       <param>${project.drupal.dir}</param>
@@ -48,21 +71,7 @@
     </chmod>
   </target>
   
-  <target name="db_create">
-    <echo>Create project database</echo>
-    <pdo url="${env.db.driver}:host=${env.db.host}" userId="${env.db.user.sudo}" password="${env.db.user.sudo.password}" onerror="abort">
-      CREATE DATABASE ${env.db.name};
-    </pdo>
-  </target>
-  
-  <target name="db_drop">
-    <echo>Drop project database</echo>
-    <pdo url="${env.db.driver}:host=${env.db.host}" userId="${env.db.user.sudo}" password="${env.db.user.sudo.password}" onerror="abort">
-      DROP DATABASE IF EXISTS ${env.db.name};
-    </pdo>
-  </target>
-  
-  <target name="drop" depends="clear, db_drop">
+  <target name="drop" depends="clear, db-drop">
     <echo>Project dropped</echo>
   </target>
   
@@ -71,27 +80,64 @@
     <if>
       <available file="${project.drupal.dir}" property="dir_exists"/>
       <then>
-        <chmod mode="0777" quiet="true" failonerror="false">
-          <fileset dir="${project.drupal.dir}">
-            <include name="sites/*"/>
-          </fileset>
-        </chmod>
+        <phingcall target="add-permission" />
         <delete dir="${project.drupal.dir}"/>
       </then>
     </if>
     <property name="project.cleaned" value="true"/>
   </target>
   
-  <target name="drake_install" description="Install drake migration">
+  <target name="switch-modules" description="Enable and disable modules">
     <drush command="pm-enable" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
-      <param>admin_menu, devel</param>
+      <option name="root">${project.drupal.dir}</option>
+      <param>${project.drupal.module.contrib}</param>
     </drush>
     <drush command="pm-disable" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
-      <param>overlay, toolbar, color, help, rdf, shortcut</param>
+      <option name="root">${project.drupal.dir}</option>
+      <param>dashboard, overlay, toolbar, color, help, rdf, search</param>
+    </drush>
+    <drush command="pm-uninstall" assume="yes">
+      <option name="root">${project.drupal.dir}</option>
+      <param>dashboard, overlay, toolbar, color, help, rdf, search</param>
     </drush>
     <phingcall target="cc"/>
+  </target>
+
+  <target name="add-permission">
+    <chmod mode="0777" quiet="true" failonerror="false">
+      <fileset dir="${project.drupal.dir}">
+      </fileset>
+    </chmod>
+    <chmod mode="0777" quiet="true" failonerror="false">
+      <fileset dir="${project.drupal.dir}/sites/default">
+      </fileset>
+    </chmod>
+  </target>
+
+  <target name="cm-up" description="Build cmartbooks project">
+    <phingcall target="db-restore" />
+    <phingcall target="configure-settings-file" />
+  </target>
+
+  <target name="delete-folder">
+    <if>
+      <available file="${folder.deletable}" property="dir_exists" />
+      <then>
+        <delete dir="${folder.deletable}" />
+        <echo msg="Folder is deleted." />
+      </then>
+    </if>
+  </target>
+
+  <target name="create-folder">
+    <if>
+      <not>
+        <available file="${folder.creatable}" property="dir_exists" />
+      </not>
+      <then>
+        <mkdir dir="${folder.creatable}" mode="0777"/>
+      </then>
+    </if>
   </target>
   
 </project>

@@ -1,49 +1,90 @@
 <project name="backup">
-  
-  <property name="backup.dir" value="${env.backup.dir}"/>
-  
-  <target name="backup" depends="sql-dump, backup-custom, backup-theme">
+
+  <target name="backup" depends="backup-custom-modules, backup-features-modules, backup-custom-themes, backup-nodes">
   </target>
   
   <target name="dump">
-    <property name="backup.dir" value="project" override="TRUE"/>
-    <phingcall target="sql-dump"/>
+    <property name="env.project.backup.dir" value="${project.drupal.dir}" override="TRUE" />
+    <phingcall target="backup-database"/>
   </target>
   
-  <target name="sql-dump">
+  <target name="sql-dump" depends="backup-dir-init">
+    <phingcall target="backup-database" />
+  </target>
+
+  <target name="backup-database">
     <phingcall target="cc"/>
-    <tstamp/>
+    <tstamp />
     <drush command="sql-dump" assume="yes">
-      <option name="root">${env.dir}${project.drupal.dir}</option>
+      <option name="root">${project.drupal.dir}</option>
       <option name="gzip"></option>
-      <option name="result-file">${env.dir}${backup.dir}/${DSTAMP}-${TSTAMP}.sql</option>
+      <option name="result-file">${env.database.dir}/${DSTAMP}-${TSTAMP}.sql</option>
     </drush>
   </target>
   
-  <target name="backup-custom" depends="backup-dir-init">
-    <copy todir="${env.dir}${env.backup.dir}/custom">
-      <fileset dir="${env.dir}${project.drupal.dir}/sites/all/modules/custom">
+  <target name="backup-custom-modules" depends="backup-dir-init">
+    <phingcall target="delete-folder">
+      <property name="folder.deletable" value="${env.project.backup.dir}/modules/custom" />
+    </phingcall>
+    <copy todir="${env.project.backup.dir}/modules/custom">
+      <fileset dir="${project.drupal.custom.dir}">
+        <include name="**"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="backup-features-modules" depends="backup-dir-init">
+    <phingcall target="delete-folder">
+      <property name="folder.deletable" value="${env.project.backup.dir}/modules/features" />
+    </phingcall>
+    <copy todir="${env.project.backup.dir}/modules/features">
+      <fileset dir="${project.drupal.features.dir}">
         <include name="**"/>
       </fileset>
     </copy>
   </target>
   
-  <target name="backup-theme" depends="backup-dir-init">
-    <copy todir="${env.dir}${env.backup.dir}/theme">
-      <fileset dir="${env.dir}${project.drupal.dir}/sites/all/themes">
+  <target name="backup-custom-themes" depends="backup-dir-init">
+    <phingcall target="delete-folder">
+      <property name="folder.deletable" value="${env.project.backup.dir}/themes" />
+    </phingcall>
+    <copy todir="${env.project.backup.dir}/themes">
+      <fileset dir="${project.drupal.theme.dir}">
+        <include name="**"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="backup-project-files" depends="backup-dir-init">
+    <phingcall target="delete-folder">
+      <property name="folder.deletable" value="${env.project.backup.dir}/files" />
+    </phingcall>
+     <copy todir="${env.project.backup.dir}/files">
+      <fileset dir="${project.drupal.files.dir}">
         <include name="**"/>
       </fileset>
     </copy>
   </target>
 
   <target name="backup-dir-init">
+    <phingcall target="create-folder">
+      <property name="folder.creatable" value="${env.project.backup.dir}" />
+    </phingcall>
+  </target>
+
+  <target name="backup-nodes">
     <if>
-      <not>
-        <available file="{env.dir}${env.backup.dir}"/>
-      </not>
+      <available file="${env.project.backup.dir}/nodes/nodes" property="file_exists" />
       <then>
-        <mkdir dir="${env.dir}${env.backup.dir}" mode="0777"/>
+        <delete file="${env.project.backup.dir}/nodes/nodes" quiet='true' />
+        <echo msg="Delete nodes backup file" />
       </then>
     </if>
+    <drush command="node-export-export">
+      <option name="root">${project.drupal.dir}</option>
+      <param>--file=${env.project.backup.dir}/nodes/nodes</param>
+      <param>--format=xml</param>
+    </drush>
   </target>
+
 </project>

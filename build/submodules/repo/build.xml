@@ -1,9 +1,37 @@
 <project name="repo">
   <target name="pull">
-    <gitpull 
-      repository="${env.dir}${project.drupal.dir}"
+    <phingcall target="git-pull" />
+  </target>
+  <target name="push">
+    <phingcall target="git-add-all" />
+    <phingcall target="git-commit" />
+    <phingcall target="git-push" />
+  </target>
+  <target name="git-add">
+    <echo msg="Git add files" />
+    <exec command="git add ${env.project.dir}" />
+  </target>
+  <target name="git-add-all">
+    <echo msg="Git add all files" />
+    <exec command="git add -A ${env.project.dir}" />
+  </target>
+  <target name="git-commit">
+    <echo msg="Git commit" />
+    <exec command="git commit -m '${m}'" />
+  </target>
+  <target name="git-push">
+    <echo msg="Git push" />
+    <gitpush
+      repository="${env.project.dir}"
+      refspec="${repo.branch}"
+      />
+  </target>
+  <target name="git-pull">
+    <echo msg="Git pull" />
+    <gitpull
+      repository="${env.project.dir}"
       source="origin"
       refspec="${repo.branch}"
-    />
+      />
   </target>
 </project>

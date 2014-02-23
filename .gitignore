@@ -1,2 +1,6 @@
-/project
-/backup
+.idea/
+nbproject/
+backup/database/*.sql
+backup/database/*.sql.gz
+project/*
+codesniffer.txt
