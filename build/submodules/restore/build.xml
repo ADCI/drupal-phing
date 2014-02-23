@@ -1,0 +1,129 @@
+<project name="restore">
+
+  <target name="restore" depends="restore-custom-modules, restore-features-modules, restore-custom-themes, patches-apply" />
+
+  <target name="restore-custom-modules" depends="restore-custom-dir-init">
+    <phingcall target="delete-folder">
+      <property name="folder.deletable" value="${project.drupal.custom.dir}" />
+    </phingcall>
+    <copy todir="${project.drupal.custom.dir}">
+      <fileset dir="${env.project.backup.dir}/modules/custom">
+        <include name="**"/>
+      </fileset>
+    </copy>
+    <echo msg="Custom modules were restore." />
+  </target>
+
+  <target name="restore-features-modules" depends="restore-features-dir-init">
+    <phingcall target="delete-folder">
+      <property name="folder.deletable" value="${project.drupal.features.dir}" />
+    </phingcall>
+    <copy todir="${project.drupal.features.dir}">
+      <fileset dir="${env.project.backup.dir}/modules/features">
+        <include name="**"/>
+      </fileset>
+    </copy>
+    <echo msg="Features modules were restore." />
+  </target>
+  
+  <target name="restore-custom-themes" depends="restore-theme-dir-init">
+    <phingcall target="delete-folder">
+      <property name="folder.deletable" value="${project.drupal.theme.dir}" />
+    </phingcall>
+    <copy todir="${project.drupal.theme.dir}">
+      <fileset dir="${env.project.backup.dir}/themes">
+        <include name="**"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="restore-project-files" depends="restore-files-dir-init">
+    <phingcall target="delete-folder">
+      <property name="folder.deletable" value="${project.drupal.files.dir}" />
+    </phingcall>
+    <copy todir="${project.drupal.files.dir}">
+      <fileset dir="${env.project.backup.dir}/files">
+        <include name="**"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="restore-custom-dir-init">
+    <phingcall target="create-folder">
+      <property name="folder.creatable" value="${project.drupal.custom.dir}" />
+    </phingcall>
+  </target>
+
+  <target name="restore-features-dir-init">
+    <phingcall target="create-folder">
+      <property name="folder.creatable" value="${project.drupal.features.dir}" />
+    </phingcall>
+  </target>
+
+  <target name="restore-theme-dir-init">
+    <phingcall target="create-folder">
+      <property name="folder.creatable" value="${project.drupal.theme.dir}" />
+    </phingcall>
+  </target>
+
+  <target name="restore-files-dir-init">
+    <phingcall target="create-folder">
+      <property name="folder.creatable" value="${project.drupal.files.dir}" />
+    </phingcall>
+  </target>
+
+  <target name="restore-nodes">
+    <if>
+      <available file="${env.project.backup.dir}/nodes/nodes" property="files_exists" />
+      <then>
+        <drush command="migrate-auto-register">
+          <option name="root">${project.drupal.dir}</option>
+        </drush>
+        <drush command="migrate-import">
+          <option name="root">${project.drupal.dir}</option>
+          <param>IssueListNodes</param>
+        </drush>
+        <drush command="migrate-import">
+          <option name="root">${project.drupal.dir}</option>
+          <param>MediaNodes</param>
+        </drush>
+        <drush command="migrate-import">
+          <option name="root">${project.drupal.dir}</option>
+          <param>BookNodes</param>
+        </drush>
+        <drush command="migrate-import">
+          <option name="root">${project.drupal.dir}</option>
+          <param>IssueNodes</param>
+        </drush>
+        <drush command="migrate-import">
+          <option name="root">${project.drupal.dir}</option>
+          <param>IssueDetailsNodes</param>
+        </drush>
+        <drush command="migrate-import">
+          <option name="root">${project.drupal.dir}</option>
+          <param>MediaGroupNodes</param>
+        </drush>
+        <drush command="migrate-import">
+          <option name="root">${project.drupal.dir}</option>
+          <param>MediaAlbumNodes</param>
+        </drush>
+        <drush command="migrate-import">
+          <option name="root">${project.drupal.dir}</option>
+          <param>MediaImageNodes</param>
+        </drush>
+        <drush command="migrate-import">
+          <option name="root">${project.drupal.dir}</option>
+          <param>GroupNodes</param>
+        </drush>
+        <echo msg="Restore nodes" />
+      </then>
+    </if>
+  </target>
+
+  <target name="restore-template-nodes">
+    <drush command="restore-template-nodes">
+      <option name="root">${project.drupal.dir}</option>
+    </drush>
+  </target>
+
+</project>

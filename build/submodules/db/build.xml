@@ -1,0 +1,39 @@
+<project name="db">
+
+  <target name="db-create">
+    <echo>Create project database</echo>
+    <pdo url="${env.db.driver}:host=${env.db.host}" userId="${env.db.user.sudo}" password="${env.db.user.sudo.password}" onerror="abort">
+      CREATE DATABASE ${env.db.name};
+    </pdo>
+  </target>
+
+  <target name="db-drop">
+    <echo>Drop project database</echo>
+    <pdo url="${env.db.driver}:host=${env.db.host}" userId="${env.db.user.sudo}" password="${env.db.user.sudo.password}" onerror="abort">
+      DROP DATABASE IF EXISTS ${env.db.name};
+    </pdo>
+  </target>
+
+  <target name="db-restore" depends="db-drop, db-create">
+    <echo msg="Restore project database" />
+    <exec command="gunzip &lt; ${env.db.restore.dir}/${env.db.name}.sql.gz | mysql -h ${env.db.host} -u${env.db.user} -p${env.db.password} ${env.db.name}" logoutput="true" checkreturn="true" />
+  </target>
+
+  <target name="optimizedb">
+    <echo msg="Optimize database [${env.db.name}]." />
+    <if>
+      <equals arg1="${env.db.optimize_tables}" arg2="" />
+
+      <then>
+        <exec command="mysqlcheck -h ${env.db.host} -u${env.db.user} -p${env.db.password} -o ${env.db.name}" logoutput="true" checkreturn="true" />
+      </then>
+
+      <else>
+        <exec command="mysql -h ${env.db.host} -u${env.db.user} -p${env.db.password} ${env.db.name} -e 'OPTIMIZE TABLE ${env.db.optimize_tables}'" logoutput="true" checkreturn="true" />
+      </else>
+
+    </if>
+    
+  </target>
+
+</project>

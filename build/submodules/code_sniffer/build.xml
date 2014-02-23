@@ -1,0 +1,12 @@
+<project name="code_sniffer">
+  
+  <target name="sniff">
+    <echo msg="sniffing ${project.drupal.dir}/sites/all/modules/custom/"/>
+    <phpcodesniffer standard="Zend">         
+      <fileset dir="${project.drupal.dir}/sites/all/modules/custom/" id="filestosniff">             
+        <include name="*.module"/>         
+      </fileset>     
+    </phpcodesniffer>
+  </target>
+
+</project>

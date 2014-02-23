@@ -1,0 +1,8 @@
+<project name="codesniffer">
+
+  <target name="sniff">
+    <echo msg="Sniffing ${env.codesniffer.sniff}" />
+    <exec command="phpcs --standard=${env.codesniffer.standard.path} ${env.project.dir}/${env.codesniffer.sniff} --report-file=${env.codesniffer.result}"  />
+  </target>
+  
+</project>
