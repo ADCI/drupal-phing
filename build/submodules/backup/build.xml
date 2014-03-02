@@ -3,10 +3,10 @@
   <target name="backup" depends="backup-custom-modules, backup-features-modules, backup-custom-themes, backup-nodes" />
 
   <target name="dump">
-    <property name="env.backup.dir" value="${project.drupal.dir}" override="TRUE" />
+    <property name="env.backup.dir" value="${project.drupal.dir}" override="true" />
     <phingcall target="backup-database"/>
   </target>
-  
+
   <target name="sql-dump" depends="backup-dir-init">
     <phingcall target="backup-database" />
   </target>
@@ -21,10 +21,10 @@
       <option name="result-file">${env.backup.dir}/${backup_name}</option>
     </drush>
     <phingcall target="slack-message">
-      <property name="slack.text" value="You can download new database dump here: ${project.url}/${backup_name}.gz" override="TRUE" />
+      <property name="slack.text" value="You can download new database dump here: ${project.url}/${backup_name}.gz" override="true" />
     </phingcall>
   </target>
-  
+
   <target name="backup-custom-modules" depends="backup-dir-init">
     <phingcall target="delete-folder">
       <property name="folder.deletable" value="${env.backup.dir}/modules/custom" />
@@ -46,7 +46,7 @@
       </fileset>
     </copy>
   </target>
-  
+
   <target name="backup-custom-themes" depends="backup-dir-init">
     <phingcall target="delete-folder">
       <property name="folder.deletable" value="${env.backup.dir}/themes" />
@@ -80,7 +80,7 @@
     <if>
       <available file="${env.backup.dir}/nodes/nodes" property="file_exists" />
       <then>
-        <delete file="${env.backup.dir}/nodes/nodes" quiet='true' />
+        <delete file="${env.backup.dir}/nodes/nodes" quiet="true" />
         <echo msg="Delete nodes backup file" />
       </then>
     </if>
@@ -95,7 +95,7 @@
     <if>
       <available file="${env.backup.dir}/users/users" property="file_exists" />
       <then>
-        <delete file="${env.backup.dir}/users/users" quiet='true' />
+        <delete file="${env.backup.dir}/users/users" quiet="true" />
         <echo msg="Delete users backup file" />
       </then>
     </if>
@@ -111,7 +111,7 @@
     <if>
       <available file="${env.backup.dir}/taxonomy/taxonomy" property="file_exists" />
       <then>
-        <delete file="${env.backup.dir}/taxonomy/taxonomy" quiet='true' />
+        <delete file="${env.backup.dir}/taxonomy/taxonomy" quiet="true" />
         <echo msg="Delete taxonomy backup file" />
       </then>
     </if>

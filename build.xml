@@ -1,4 +1,4 @@
-<project name="phing_test" default="init">
+<project name="druphing" default="init">
 
   <property file="build/properties/project.prop"/>
   <property file="build/properties/env.prop"/>
@@ -17,7 +17,17 @@
 
   <target name="init" />
 
+  <!-- Build/rebuild whole site. -->
   <target name="build" depends="drush-make, configure-settings-file, site-install" />
+
+  <target name="drush-make" depends="clear">
+    <echo msg="Drupal make run" />
+    <drush command="make" assume="yes">
+      <param>${project.make.file}</param>
+      <param>${project.drupal.dir}</param>
+    </drush>
+    <phingcall target="add-permission" />
+  </target>
 
   <target name="site-install" depends="db-drop, db-create, restore-custom-modules, restore-features-modules, restore-custom-themes, restore-project-files" description="Install site">
     <echo msg="Project installation started" />
@@ -57,20 +67,11 @@
       <option name="site-mail">${project.drupal.site.mail}</option>
       <param>standard</param>
     </drush>
-    <echo msg="Drupal is installed!" />
+    <echo msg="Drupal has been installed." />
   </target>
 
-  <target name="drush-make" depends="clear">
-    <echo msg="Drupal make run" />
-    <drush command="make" assume="yes">
-      <param>${project.make.file}</param>
-      <param>${project.drupal.dir}</param>
-    </drush>
-    <phingcall target="add-permission" />
-  </target>
-  
   <target name="drop" depends="clear, db-drop">
-    <echo msg="Project dropped" />
+    <echo msg="Project dir has been cleared and db has been dropped" />
   </target>
   
   <target name="clear">
@@ -82,7 +83,7 @@
         <delete dir="${project.drupal.dir}"/>
       </then>
     </if>
-    <property name="project.cleaned" value="true"/>
+    <!-- <property name="project.cleaned" value="true"/> -->
   </target>
 
   <target name="switch-modules" description="Enable and disable modules">
@@ -90,10 +91,10 @@
       <property name="projects.installable" value="${project.drupal.module.contrib}" />
     </phingcall>
     <phingcall target="modules-disable">
-      <property name="projects.disable" value="dashboard, overlay, toolbar, color, help, rdf, search" />
+      <property name="projects.disable" value="${project.drupal.module.uninstall}" />
     </phingcall>
     <phingcall target="modules-uninstall">
-      <property name="projects.uninstall" value="dashboard, overlay, toolbar, color, help, rdf, search" />
+      <property name="projects.uninstall" value="${project.drupal.module.uninstall}" />
     </phingcall>
   </target>
 
@@ -101,6 +102,9 @@
     <phingcall target="db-restore" />
     <phingcall target="configure-settings-file" />
   </target>
+
+  <!-- Short alias for project-up -->
+  <target name="pup" depends="project-up" description="Build project" />
 
   <target name="slack-message">
     <http-request url="${slack.url}" verbose="true" method="POST" >

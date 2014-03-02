@@ -120,7 +120,7 @@
   <target name="patches-apply">
     <exec command="patch -p0 -i ${env.backup.patches.dir}/node-export-fid-import.patch" />
     <exec command="patch -p0 -i ${env.backup.patches.dir}/node_export_dependency_exntity_reference.patch" />
-    <exec command="patch -p0 -i ${env.backup.patches.dir}/ctools_automodal_from_insurance.patch" />
+    <!-- <exec command="patch -p0 -i ${env.backup.patches.dir}/ctools_automodal_from_insurance.patch" /> -->
   </target>
 
   <target name="create-folder">
@@ -129,6 +129,7 @@
         <available file="${folder.creatable}" property="dir_exists" />
       </not>
       <then>
+        <!-- TODO: Shouldn't we set mode to 0755? -->
         <mkdir dir="${folder.creatable}" mode="0777"/>
       </then>
     </if>
@@ -145,6 +146,7 @@
   </target>
 
   <target name="add-permission">
+    <!-- TODO: Shouldn't we set mode to 0755 for dirs and 0644 for files? -->
     <chmod mode="0777" quiet="true" failonerror="false">
       <fileset dir="${project.drupal.dir}">
         <include name="sites/*"/>

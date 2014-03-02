@@ -2,7 +2,29 @@
 
   <target name="sniff">
     <echo msg="Sniffing ${env.codesniffer.sniff}" />
-    <exec command="phpcs --standard=${env.codesniffer.standard.path} ${env.project.dir}/${env.codesniffer.sniff} --report-file=${env.codesniffer.result}"  />
+    <!-- CodeSniffer does not empty report file if there are no errors. -->
+    <delete file="${env.codesniffer.result}"/>
+    <exec command="phpcs --standard=${env.codesniffer.standard.path} ${env.project.dir}/${env.codesniffer.sniff} --report-file=${env.codesniffer.result}" returnProperty="codesniffer.retcode" />
+    <if>
+      <equals arg1="${codesniffer.retcode}" arg2="0" />
+      <then>
+        <loadfile property="codesniffer.errors" file="${env.codesniffer.result}" />
+        <if>
+          <equals arg1="${codesniffer.errors}" arg2="" trim="true" />
+          <then>
+            <property name="codesniffer.status" value="true" override="true" />
+            <echo msg="File '${env.codesniffer.sniff}' sniffed OK." />
+          </then>
+          <else>
+            <property name="codesniffer.status" value="false" override="true" />
+            <echo msg="Sniffed some errors in file '${env.codesniffer.sniff}'. All errors has been logged to '${env.codesniffer.result}'." />
+          </else>
+        </if>
+      </then>
+      <else>
+        <property name="codesniffer.status" value="false" override="true" />
+      </else>
+    </if>
   </target>
   
 </project>

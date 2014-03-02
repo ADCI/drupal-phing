@@ -1,6 +1,9 @@
-project.name=bug_tracker
-project.url=http://bug_tracker.cmartbooks.com
-project.make.file=build.make
+; Name of you site. It should match site name from Vagrantfile.
+project.name=site
+; TODO: rename? something like production_url?
+project.url=http://site.com
+; File name of make file to use.
+project.make.file=build.clean.make
 project.drupal.dir=${env.project.dir}/project
 project.drupal.custom.dir=${project.drupal.dir}/sites/all/modules/custom
 project.drupal.features.dir=${project.drupal.dir}/sites/all/modules/features
@@ -19,7 +22,8 @@ project.drupal.site.name=${project.name}
 project.drupal.site.mail=site@admin.com
 
 project.drupal.module.contrib=admin_menu, ctools, ctools_automodal, ctools_automodal_admin, references, node_reference, user_reference, date, delta, devel, email, entity, features, strongarm, fe_block, field_group, flag, globalredirect, job_scheduler, jquery_update, libraries, logintoboggan, mailsystem, mediaelement, mimemail, node_field, plupload, rules, token, views, views_ui, views_data_export, filefield_sources, node_export, node_export_relation, migrate, migrate_ui, migrate_extras
-project.drupal.module.custom=features_views_export_users, features_views_export_taxonomies, features_sm_book, features_contacts_fields, features_sm_media, email_reminder, sm_template_nodes, sm_reminder, sm_reminder_gadget, general_common, grouping_nodes, image_hotspots, sm_common, sm_fields, sm_add_more, select_add_more_widget, sm_node_checklist, sm_checklist, sm_comments, sm_chat, sm_issue, sm_issue_gadget, features_issue_fields, sm_managed_file_widget, sm_schedules, sm_tools, work_list, sm_contacts, cmartnode, sm_book, sm_book_manual, sm_book_copy, sm_node_in_book, sm_media, sm_migrate
+project.drupal.module.custom=
 project.drupal.module.settings=features_site_settings, features_block_settings, features_ctools_automodal_settings
-project.drupal.theme.default=cmart
-project.drupal.theme.custom=basetheme, cmart
+project.drupal.module.uninstall=dashboard, overlay, toolbar, color, help, rdf, search
+project.drupal.theme.default=seven
+project.drupal.theme.custom=

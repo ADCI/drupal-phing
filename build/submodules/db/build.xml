@@ -1,14 +1,14 @@
 <project name="db">
 
   <target name="db-create">
-    <echo>Create project database</echo>
+    <echo msg="Create project database" />
     <pdo url="${env.db.driver}:host=${env.db.host}" userId="${env.db.user.sudo}" password="${env.db.user.sudo.password}" onerror="abort">
       CREATE DATABASE ${env.db.name};
     </pdo>
   </target>
 
   <target name="db-drop">
-    <echo>Drop project database</echo>
+    <echo msg="Drop project database" />
     <pdo url="${env.db.driver}:host=${env.db.host}" userId="${env.db.user.sudo}" password="${env.db.user.sudo.password}" onerror="abort">
       DROP DATABASE IF EXISTS ${env.db.name};
     </pdo>
@@ -18,6 +18,9 @@
     <echo msg="Restore project database" />
     <exec command="gunzip &lt; ${env.backup.db.dir}/${env.db.name}.sql.gz | mysql -h ${env.db.host} -u${env.db.user} -p${env.db.password} ${env.db.name}" logoutput="true" checkreturn="true" />
   </target>
+
+  <!-- Short alias for db-restore. -->
+  <target name="dbr" depends="db-restore" />
 
   <target name="optimizedb">
     <echo msg="Optimize database [${env.db.name}]." />
