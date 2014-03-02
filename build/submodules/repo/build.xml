@@ -103,7 +103,8 @@
         <equals arg1="${m}" arg2="" />
       </or>
       <then>
-        <fail msg='You should add commit message. Use command line option "-Dm=commit message here" (including quotes).'/>
+        <echo msg='You should add commit message. Use command line option "-Dm=commit message here" (including quotes).'/>
+        <php expression="exit();"/>
       </then>
     </if>
   </target>
@@ -130,7 +131,8 @@
         <equals arg1="${c}" arg2="" />
       </or>
       <then>
-        <fail msg="You should add commit number. Use command line option -Dc=commit_number."/>
+        <echo msg="You should add commit number. Use command line option -Dc=commit_number."/>
+        <php expression="exit();"/>
       </then>
     </if>
   </target>
