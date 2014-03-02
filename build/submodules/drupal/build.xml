@@ -8,10 +8,9 @@
   </target>
   
   <target name="run_tests">
-    <drush command="pm-enable" assume="yes">
-      <option name="root">${project.drupal.dir}</option>
-      <param>simpletest</param>
-    </drush>
+    <phingcall target="modules-enable">
+      <property name="projects.installable" value="simpletest" />
+    </phingcall>
     <drush command="test-run" assume="yes">
       <option name="root">${project.drupal.dir}</option>
       <param>--all</param>
@@ -55,9 +54,27 @@
 
   <target name="modules-enable">
     <echo msg="Custom modules installation" />
-    <drush command="pm-enable" assume="yes">
+    <drush command="en" assume="yes">
       <option name="root">${project.drupal.dir}</option>
       <param>${projects.installable}</param>
+    </drush>
+    <phingcall target="cc" />
+  </target>
+
+  <target name="modules-disable">
+    <echo msg="Disable custom modules" />
+    <drush command="dis" assume="yes">
+      <option name="root">${project.drupal.dir}</option>
+      <param>${projects.disable}</param>
+    </drush>
+    <phingcall target="cc" />
+  </target>
+
+  <target name="modules-uninstall">
+    <echo msg="Uninstall custom modules" />
+    <drush command="pm-uninstall" assume="yes">
+      <option name="root">${project.drupal.dir}</option>
+      <param>${projects.uninstall}</param>
     </drush>
     <phingcall target="cc" />
   </target>
@@ -86,7 +103,7 @@
 
   <target name="copy-settings-file" description="Copy settings file if it is existing">
     <echo msg="Copy settings.php file" />
-    <copy file="${env.files.dir}/${project.drupal.settings.file}"
+    <copy file="${env.build.files.dir}/${project.drupal.settings.file}"
           tofile="${project.drupal.settings.dir}/${project.drupal.settings.file}"
           overwrite="true">
       <filterchain>
@@ -101,9 +118,38 @@
   </target>
 
   <target name="patches-apply">
-    <exec command="patch -p0 -i ${env.patches.dir}/node-export-fid-import.patch" />
-    <exec command="patch -p0 -i ${env.patches.dir}/node_export_dependency_exntity_reference.patch" />
-    <exec command="patch -p0 -i ${env.patches.dir}/ctools_automodal_from_insurance.patch" />
+    <exec command="patch -p0 -i ${env.backup.patches.dir}/node-export-fid-import.patch" />
+    <exec command="patch -p0 -i ${env.backup.patches.dir}/node_export_dependency_exntity_reference.patch" />
+    <exec command="patch -p0 -i ${env.backup.patches.dir}/ctools_automodal_from_insurance.patch" />
+  </target>
+
+  <target name="create-folder">
+    <if>
+      <not>
+        <available file="${folder.creatable}" property="dir_exists" />
+      </not>
+      <then>
+        <mkdir dir="${folder.creatable}" mode="0777"/>
+      </then>
+    </if>
+  </target>
+
+  <target name="delete-folder">
+    <if>
+      <available file="${folder.deletable}" property="dir_exists" />
+      <then>
+        <delete dir="${folder.deletable}" />
+        <echo msg="Folder is deleted." />
+      </then>
+    </if>
+  </target>
+
+  <target name="add-permission">
+    <chmod mode="0777" quiet="true" failonerror="false">
+      <fileset dir="${project.drupal.dir}">
+        <include name="sites/*"/>
+      </fileset>
+    </chmod>
   </target>
   
 </project>

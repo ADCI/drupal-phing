@@ -1,10 +1,9 @@
 <project name="backup">
 
-  <target name="backup" depends="backup-custom-modules, backup-features-modules, backup-custom-themes, backup-nodes">
-  </target>
-  
+  <target name="backup" depends="backup-custom-modules, backup-features-modules, backup-custom-themes, backup-nodes" />
+
   <target name="dump">
-    <property name="env.project.backup.dir" value="${project.drupal.dir}" override="TRUE" />
+    <property name="env.backup.dir" value="${project.drupal.dir}" override="TRUE" />
     <phingcall target="backup-database"/>
   </target>
   
@@ -15,18 +14,22 @@
   <target name="backup-database">
     <phingcall target="cc"/>
     <tstamp />
+    <property name="backup_name" value="${DSTAMP}-${TSTAMP}.sql" />
     <drush command="sql-dump" assume="yes">
       <option name="root">${project.drupal.dir}</option>
       <option name="gzip"></option>
-      <option name="result-file">${env.database.dir}/${DSTAMP}-${TSTAMP}.sql</option>
+      <option name="result-file">${env.backup.dir}/${backup_name}</option>
     </drush>
+    <phingcall target="slack-message">
+      <property name="slack.text" value="You can download new database dump here: ${project.url}/${backup_name}.gz" override="TRUE" />
+    </phingcall>
   </target>
   
   <target name="backup-custom-modules" depends="backup-dir-init">
     <phingcall target="delete-folder">
-      <property name="folder.deletable" value="${env.project.backup.dir}/modules/custom" />
+      <property name="folder.deletable" value="${env.backup.dir}/modules/custom" />
     </phingcall>
-    <copy todir="${env.project.backup.dir}/modules/custom">
+    <copy todir="${env.backup.dir}/modules/custom">
       <fileset dir="${project.drupal.custom.dir}">
         <include name="**"/>
       </fileset>
@@ -35,9 +38,9 @@
 
   <target name="backup-features-modules" depends="backup-dir-init">
     <phingcall target="delete-folder">
-      <property name="folder.deletable" value="${env.project.backup.dir}/modules/features" />
+      <property name="folder.deletable" value="${env.backup.dir}/modules/features" />
     </phingcall>
-    <copy todir="${env.project.backup.dir}/modules/features">
+    <copy todir="${env.backup.dir}/modules/features">
       <fileset dir="${project.drupal.features.dir}">
         <include name="**"/>
       </fileset>
@@ -46,9 +49,9 @@
   
   <target name="backup-custom-themes" depends="backup-dir-init">
     <phingcall target="delete-folder">
-      <property name="folder.deletable" value="${env.project.backup.dir}/themes" />
+      <property name="folder.deletable" value="${env.backup.dir}/themes" />
     </phingcall>
-    <copy todir="${env.project.backup.dir}/themes">
+    <copy todir="${env.backup.dir}/themes">
       <fileset dir="${project.drupal.theme.dir}">
         <include name="**"/>
       </fileset>
@@ -57,33 +60,66 @@
 
   <target name="backup-project-files" depends="backup-dir-init">
     <phingcall target="delete-folder">
-      <property name="folder.deletable" value="${env.project.backup.dir}/files" />
+      <property name="folder.deletable" value="${env.backup.dir}/files" />
     </phingcall>
-     <copy todir="${env.project.backup.dir}/files">
+     <copy todir="${env.backup.dir}/files">
       <fileset dir="${project.drupal.files.dir}">
         <include name="**"/>
+        <exclude name="styles/**"/>
       </fileset>
     </copy>
   </target>
 
   <target name="backup-dir-init">
     <phingcall target="create-folder">
-      <property name="folder.creatable" value="${env.project.backup.dir}" />
+      <property name="folder.creatable" value="${env.backup.dir}" />
     </phingcall>
   </target>
 
   <target name="backup-nodes">
     <if>
-      <available file="${env.project.backup.dir}/nodes/nodes" property="file_exists" />
+      <available file="${env.backup.dir}/nodes/nodes" property="file_exists" />
       <then>
-        <delete file="${env.project.backup.dir}/nodes/nodes" quiet='true' />
+        <delete file="${env.backup.dir}/nodes/nodes" quiet='true' />
         <echo msg="Delete nodes backup file" />
       </then>
     </if>
     <drush command="node-export-export">
       <option name="root">${project.drupal.dir}</option>
-      <param>--file=${env.project.backup.dir}/nodes/nodes</param>
+      <param>--file=${env.backup.dir}/nodes/nodes</param>
       <param>--format=xml</param>
+    </drush>
+  </target>
+
+  <target name="backup-users">
+    <if>
+      <available file="${env.backup.dir}/users/users" property="file_exists" />
+      <then>
+        <delete file="${env.backup.dir}/users/users" quiet='true' />
+        <echo msg="Delete users backup file" />
+      </then>
+    </if>
+    <drush command="views-data-export">
+      <option name="root">${project.drupal.dir}</option>
+      <param>users_export</param>
+      <param>views_data_export_1</param>
+      <param>backup/users/users</param>
+    </drush>
+  </target>
+
+  <target name="backup-taxonomy">
+    <if>
+      <available file="${env.backup.dir}/taxonomy/taxonomy" property="file_exists" />
+      <then>
+        <delete file="${env.backup.dir}/taxonomy/taxonomy" quiet='true' />
+        <echo msg="Delete taxonomy backup file" />
+      </then>
+    </if>
+    <drush command="views-data-export">
+      <option name="root">${project.drupal.dir}</option>
+      <param>taxonomy_export</param>
+      <param>views_data_export_1</param>
+      <param>backup/taxonomy/taxonomy</param>
     </drush>
   </target>
 

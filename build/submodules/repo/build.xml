@@ -1,24 +1,62 @@
 <project name="repo">
+
+  <target name="deploy" depends="pull">
+    <phingcall target="slack-message">
+      <property name="slack.text" value="Git pull on the production server is complete." override="TRUE" />
+    </phingcall>
+  </target>
+
   <target name="pull">
     <phingcall target="git-pull" />
   </target>
+
   <target name="push">
-    <phingcall target="git-add-all" />
-    <phingcall target="git-commit" />
-    <phingcall target="git-push" />
+    <if>
+      <and>
+        <isset property="m" />
+        <not>
+          <equals arg1="${m}" arg2="" />
+        </not>
+      </and>
+      <then>
+        <phingcall target="git-add-all" />
+        <phingcall target="git-commit" />
+        <phingcall target="git-push" />
+      </then>
+      <else>
+        <echo msg='You should add commit message. Use argument "-Dm=commit message here" (including quotes).' />
+      </else>
+    </if>
   </target>
+
   <target name="git-add">
     <echo msg="Git add files" />
     <exec command="git add ${env.project.dir}" />
   </target>
+
   <target name="git-add-all">
     <echo msg="Git add all files" />
     <exec command="git add -A ${env.project.dir}" />
   </target>
+
   <target name="git-commit">
-    <echo msg="Git commit" />
-    <exec command="git commit -m '${m}'" />
+    <if>
+      <and>
+        <isset property="m" />
+        <not>
+          <equals arg1="${m}" arg2="" />
+        </not>
+      </and>
+      <then>
+        <echo msg="Git commit" />
+        <exec command="git commit -m '${m}'" />
+      </then>
+      <else>
+        <echo msg='You should add commit message. Use argument "-Dm=commit message here" (including quotes).' />
+      </else>
+    </if>
   </target>
+
   <target name="git-push">
     <echo msg="Git push" />
     <gitpush
@@ -26,6 +64,7 @@
       refspec="${repo.branch}"
       />
   </target>
+
   <target name="git-pull">
     <echo msg="Git pull" />
     <gitpull
@@ -34,4 +73,47 @@
       refspec="${repo.branch}"
       />
   </target>
+
+  <target name="git-fetch">
+    <echo msg="Git fetch"/>
+    <exec command="git fetch"/>
+  </target>
+
+  <target name="git-cherry-pick">
+    <if>
+      <and>
+        <isset property="c"/>
+        <not>
+          <equals arg1="${c}" arg2=""/>
+        </not>
+      </and>
+      <then>
+        <echo msg="Git cherry-pick"/>
+        <exec command="git cherry-pick '${c}'"/>
+      </then>
+      <else>
+        <echo msg='You should add commit number. Use argument -Dc=commit number.'/>
+      </else>
+    </if>
+  </target>
+
+  <target name="cherry-pick">
+    <if>
+      <and>
+        <isset property="c"/>
+        <not>
+          <equals arg1="${c}" arg2=""/>
+        </not>
+      </and>
+      <then>
+        <phingcall target="git-fetch"/>
+        <phingcall target="git-cherry-pick"/>
+        <phingcall target="git-push"/>
+      </then>
+      <else>
+        <echo msg='You should add commit number. Use argument -Dc=commit number.'/>
+      </else>
+    </if>
+  </target>
+
 </project>

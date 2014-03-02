@@ -1,23 +1,24 @@
 GIT commands:
-phing pull = git pull origin branch_name
-phing push "-Dm=Commit message with spaces" = git add -a, git commit -m "Commit message with spaces", git push origin branch_name:branch_name
+sudo phing pull = git pull
+sudo phing push "-Dm=Commit with spances" = git add -a, git commit -m, git push
 
 OTHER commands:
-phing db-restore = restore database from [current_project_dir]/backup/insurance.sql.gz file
-phing settings = restore settings.php
-phing cm-up = db-restore + settings
+sudo phing db-restore = restore the database from /vagrant/project/backup/insurance.sql.gz dump file
+sudo phing settings = restore the settings.php file
+sudo phing project-up = db_restore + settings commands
 
 
 Vagrant commands:
-vagrant ssh - connect to virtual machine using SSH
+vagrant ssh - connect to virtual machine
 vagrant up = create / start virtual machine
-vagrant provision = install / update virtual machine settings
+vagrant provision = install / update settings of virtual machine
 vagrant reload = restart virtual machine
 vagrant suspend = stop virtual machine
 vagrant destroy = delete virtual machine
 
-File structure:
-/vagrant - shared folder beetwen virtual machine and host machine
-[current_project_dir]/backup - folder to store db backup file insurance.sql.gz
-/var/www/[site_name] - folder for git repository files
-/var/www/[site_name]/project - site files goes there
+Structure files:
+/vagrant - the shared folder
+/vagrant/project/backup - the folder for stored db backup file insurance.sql.gz
+/var/www/insurance - the folder with git repository files
+/var/www/insurance/project - the site folder
+

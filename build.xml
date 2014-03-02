@@ -3,23 +3,24 @@
   <property file="build/properties/project.prop"/>
   <property file="build/properties/env.prop"/>
   <property file="build/properties/repo.prop"/>
+  <property file="build/properties/slack.prop"/>
   
   <taskdef name="drush" classpath="build" classname="DrushTask"/>
 
-  <import file="build/submodules/drupal/build.xml"/>
-  <import file="build/submodules/repo/build.xml"/>
-  <import file="build/submodules/backup/build.xml"/>
-  <import file="build/submodules/restore/build.xml"/>
-  <import file="build/submodules/project/build.xml"/>
-  <import file="build/submodules/db/build.xml"/>
-  <import file="build/submodules/code_sniffer/build.xml"/>
+  <import file="build/submodules/drupal/build.xml" />
+  <import file="build/submodules/repo/build.xml" />
+  <import file="build/submodules/backup/build.xml" />
+  <import file="build/submodules/restore/build.xml" />
+  <import file="build/submodules/project/build.xml" />
+  <import file="build/submodules/db/build.xml" />
+  <import file="build/submodules/codesniffer/build.xml" />
 
   <target name="init" />
 
   <target name="build" depends="drush-make, configure-settings-file, site-install" />
 
   <target name="site-install" depends="db-drop, db-create, restore-custom-modules, restore-features-modules, restore-custom-themes, restore-project-files" description="Install site">
-    <echo>Project installation started</echo>
+    <echo msg="Project installation started" />
     <phingcall target="drush-install" />
     <phingcall target="switch-modules"/>
     <phingcall target="add-permission" />
@@ -35,9 +36,10 @@
     <phingcall target="modules-enable">
       <property name="projects.installable" value="${project.drupal.module.settings}" />
     </phingcall>
-    <!--<phingcall target="restore-template-nodes" />-->
+    <phingcall target="restore-users" />
+    <phingcall target="restore-taxonomy" />
     <phingcall target="restore-nodes" />
-    <echo>Project installation finished</echo>
+    <echo msg="Project installation finished" />
   </target>
 
   <target name="drush-install">
@@ -64,19 +66,15 @@
       <param>${project.make.file}</param>
       <param>${project.drupal.dir}</param>
     </drush>
-    <chmod mode="0777" failonerror="false">
-      <fileset dir="${project.drupal.dir}">
-        <include name="sites/default/files"/>
-      </fileset>
-    </chmod>
+    <phingcall target="add-permission" />
   </target>
   
   <target name="drop" depends="clear, db-drop">
-    <echo>Project dropped</echo>
+    <echo msg="Project dropped" />
   </target>
   
   <target name="clear">
-    <echo>Clear workspace</echo>
+    <echo msg="Clear workspace" />
     <if>
       <available file="${project.drupal.dir}" property="dir_exists"/>
       <then>
@@ -86,58 +84,30 @@
     </if>
     <property name="project.cleaned" value="true"/>
   </target>
-  
+
   <target name="switch-modules" description="Enable and disable modules">
-    <drush command="pm-enable" assume="yes">
-      <option name="root">${project.drupal.dir}</option>
-      <param>${project.drupal.module.contrib}</param>
-    </drush>
-    <drush command="pm-disable" assume="yes">
-      <option name="root">${project.drupal.dir}</option>
-      <param>dashboard, overlay, toolbar, color, help, rdf, search</param>
-    </drush>
-    <drush command="pm-uninstall" assume="yes">
-      <option name="root">${project.drupal.dir}</option>
-      <param>dashboard, overlay, toolbar, color, help, rdf, search</param>
-    </drush>
-    <phingcall target="cc"/>
+    <phingcall target="modules-enable">
+      <property name="projects.installable" value="${project.drupal.module.contrib}" />
+    </phingcall>
+    <phingcall target="modules-disable">
+      <property name="projects.disable" value="dashboard, overlay, toolbar, color, help, rdf, search" />
+    </phingcall>
+    <phingcall target="modules-uninstall">
+      <property name="projects.uninstall" value="dashboard, overlay, toolbar, color, help, rdf, search" />
+    </phingcall>
   </target>
 
-  <target name="add-permission">
-    <chmod mode="0777" quiet="true" failonerror="false">
-      <fileset dir="${project.drupal.dir}">
-      </fileset>
-    </chmod>
-    <chmod mode="0777" quiet="true" failonerror="false">
-      <fileset dir="${project.drupal.dir}/sites/default">
-      </fileset>
-    </chmod>
-  </target>
-
-  <target name="cm-up" description="Build cmartbooks project">
+  <target name="project-up" description="Build project">
     <phingcall target="db-restore" />
     <phingcall target="configure-settings-file" />
   </target>
 
-  <target name="delete-folder">
-    <if>
-      <available file="${folder.deletable}" property="dir_exists" />
-      <then>
-        <delete dir="${folder.deletable}" />
-        <echo msg="Folder is deleted." />
-      </then>
-    </if>
+  <target name="slack-message">
+    <http-request url="${slack.url}" verbose="true" method="POST" >
+      <config name="adapter" value="HTTP_Request2_Adapter_Curl"/>
+      <header name="user-agent" value="Phing HttpRequestTask"/>
+      <postparameter name="payload" value="${slack.payload}" />
+    </http-request>
   </target>
 
-  <target name="create-folder">
-    <if>
-      <not>
-        <available file="${folder.creatable}" property="dir_exists" />
-      </not>
-      <then>
-        <mkdir dir="${folder.creatable}" mode="0777"/>
-      </then>
-    </if>
-  </target>
-  
 </project>

@@ -1,0 +1,4 @@
+slack.team=adci
+slack.token=42Vvd1WkAZTHO9FIF6KLU0Il
+slack.url=https://${slack.team}.slack.com/services/hooks/incoming-webhook?token=${slack.token}
+slack.payload={"text": "${slack.text}"}

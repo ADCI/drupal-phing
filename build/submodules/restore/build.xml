@@ -7,7 +7,7 @@
       <property name="folder.deletable" value="${project.drupal.custom.dir}" />
     </phingcall>
     <copy todir="${project.drupal.custom.dir}">
-      <fileset dir="${env.project.backup.dir}/modules/custom">
+      <fileset dir="${env.backup.dir}/modules/custom">
         <include name="**"/>
       </fileset>
     </copy>
@@ -19,7 +19,7 @@
       <property name="folder.deletable" value="${project.drupal.features.dir}" />
     </phingcall>
     <copy todir="${project.drupal.features.dir}">
-      <fileset dir="${env.project.backup.dir}/modules/features">
+      <fileset dir="${env.backup.dir}/modules/features">
         <include name="**"/>
       </fileset>
     </copy>
@@ -31,7 +31,7 @@
       <property name="folder.deletable" value="${project.drupal.theme.dir}" />
     </phingcall>
     <copy todir="${project.drupal.theme.dir}">
-      <fileset dir="${env.project.backup.dir}/themes">
+      <fileset dir="${env.backup.dir}/themes">
         <include name="**"/>
       </fileset>
     </copy>
@@ -42,7 +42,7 @@
       <property name="folder.deletable" value="${project.drupal.files.dir}" />
     </phingcall>
     <copy todir="${project.drupal.files.dir}">
-      <fileset dir="${env.project.backup.dir}/files">
+      <fileset dir="${env.backup.dir}/files">
         <include name="**"/>
       </fileset>
     </copy>
@@ -74,7 +74,7 @@
 
   <target name="restore-nodes">
     <if>
-      <available file="${env.project.backup.dir}/nodes/nodes" property="files_exists" />
+      <available file="${env.backup.dir}/nodes/nodes" property="files_exists" />
       <then>
         <drush command="migrate-auto-register">
           <option name="root">${project.drupal.dir}</option>
@@ -120,10 +120,36 @@
     </if>
   </target>
 
-  <target name="restore-template-nodes">
-    <drush command="restore-template-nodes">
-      <option name="root">${project.drupal.dir}</option>
-    </drush>
+  <target name="restore-users">
+    <if>
+    <available file="${env.backup.dir}/users/users" property="files_exists" />
+    <then>
+      <drush command="migrate-auto-register">
+        <option name="root">${project.drupal.dir}</option>
+      </drush>
+      <drush command="migrate-import">
+        <option name="root">${project.drupal.dir}</option>
+        <param>Users</param>
+      </drush>
+      <echo msg="Restore users" />
+    </then>
+    </if>
+  </target>
+
+  <target name="restore-taxonomy">
+    <if>
+      <available file="${env.backup.dir}/taxonomy/taxonomy" property="files_exists" />
+      <then>
+        <drush command="migrate-auto-register">
+          <option name="root">${project.drupal.dir}</option>
+        </drush>
+        <drush command="migrate-import">
+          <option name="root">${project.drupal.dir}</option>
+          <param>IssueStatusTaxonomy</param>
+        </drush>
+        <echo msg="Restore taxonomy" />
+      </then>
+    </if>
   </target>
 
 </project>
