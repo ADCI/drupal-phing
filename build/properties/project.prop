@@ -1,9 +1,10 @@
-; Name of you site. It should match site name from Vagrantfile.
-project.name=site
 ; TODO: rename? something like production_url?
 project.url=http://site.com
 ; File name of make file to use.
 project.make.file=build.clean.make
+
+; Drupal settings.
+; Pathes to drupal dirs such as sites/default and sites/all/modules.
 project.drupal.dir=${env.project.dir}/project
 project.drupal.custom.dir=${project.drupal.dir}/sites/all/modules/custom
 project.drupal.features.dir=${project.drupal.dir}/sites/all/modules/features
@@ -13,17 +14,23 @@ project.drupal.files.dir=${project.drupal.default.dir}/files
 project.drupal.theme.dir=${project.drupal.dir}/sites/all/themes
 project.drupal.settings.file=settings.php
 
+; Admin account.
 project.drupal.admin.name=admin
 project.drupal.admin.password=admin
 project.drupal.admin.mail=admin@admin.com
+
+; Site settings
 project.drupal.locale=en
 project.drupal.clean_url=1
-project.drupal.site.name=${project.name}
 project.drupal.site.mail=site@admin.com
+project.drupal.site.name=site
 
+; TODO: can we move these to .make file?
+; Contrib and custom modules, featuress, themes
 project.drupal.module.contrib=admin_menu, ctools, ctools_automodal, ctools_automodal_admin, references, node_reference, user_reference, date, delta, devel, email, entity, features, strongarm, fe_block, field_group, flag, globalredirect, job_scheduler, jquery_update, libraries, logintoboggan, mailsystem, mediaelement, mimemail, node_field, plupload, rules, token, views, views_ui, views_data_export, filefield_sources, node_export, node_export_relation, migrate, migrate_ui, migrate_extras
 project.drupal.module.custom=
 project.drupal.module.settings=features_site_settings, features_block_settings, features_ctools_automodal_settings
+; Disable modules. Usually used to uninstall some unwanted standart modules.
 project.drupal.module.uninstall=dashboard, overlay, toolbar, color, help, rdf, search
 project.drupal.theme.default=seven
 project.drupal.theme.custom=

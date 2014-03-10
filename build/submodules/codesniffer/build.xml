@@ -4,7 +4,7 @@
     <echo msg="Sniffing ${env.codesniffer.sniff}" />
     <!-- CodeSniffer does not empty report file if there are no errors. -->
     <delete file="${env.codesniffer.result}"/>
-    <exec command="phpcs --standard=${env.codesniffer.standard.path} ${env.project.dir}/${env.codesniffer.sniff} --report-file=${env.codesniffer.result}" returnProperty="codesniffer.retcode" />
+    <exec command="phpcs --standard=${env.codesniffer.standard.path} ${env.project.dir}/${env.codesniffer.sniff} --report-file=${env.codesniffer.result}" returnProperty="codesniffer.retcode" passthru="true" />
     <if>
       <equals arg1="${codesniffer.retcode}" arg2="0" />
       <then>

@@ -1,13 +1,13 @@
 <project name="backup">
 
-  <target name="backup" depends="backup-custom-modules, backup-features-modules, backup-custom-themes, backup-nodes" />
+  <target name="backup" depends="db-dump, backup-custom-modules, backup-custom-themes" />
 
   <target name="dump">
     <property name="env.backup.dir" value="${project.drupal.dir}" override="true" />
     <phingcall target="backup-database"/>
   </target>
 
-  <target name="sql-dump" depends="backup-dir-init">
+  <target name="db-dump" depends="backup-dir-init">
     <phingcall target="backup-database" />
   </target>
 
@@ -62,7 +62,7 @@
     <phingcall target="delete-folder">
       <property name="folder.deletable" value="${env.backup.dir}/files" />
     </phingcall>
-     <copy todir="${env.backup.dir}/files">
+    <copy todir="${env.backup.dir}/files">
       <fileset dir="${project.drupal.files.dir}">
         <include name="**"/>
         <exclude name="styles/**"/>
@@ -88,38 +88,6 @@
       <option name="root">${project.drupal.dir}</option>
       <param>--file=${env.backup.dir}/nodes/nodes</param>
       <param>--format=xml</param>
-    </drush>
-  </target>
-
-  <target name="backup-users">
-    <if>
-      <available file="${env.backup.dir}/users/users" property="file_exists" />
-      <then>
-        <delete file="${env.backup.dir}/users/users" quiet="true" />
-        <echo msg="Delete users backup file" />
-      </then>
-    </if>
-    <drush command="views-data-export">
-      <option name="root">${project.drupal.dir}</option>
-      <param>users_export</param>
-      <param>views_data_export_1</param>
-      <param>backup/users/users</param>
-    </drush>
-  </target>
-
-  <target name="backup-taxonomy">
-    <if>
-      <available file="${env.backup.dir}/taxonomy/taxonomy" property="file_exists" />
-      <then>
-        <delete file="${env.backup.dir}/taxonomy/taxonomy" quiet="true" />
-        <echo msg="Delete taxonomy backup file" />
-      </then>
-    </if>
-    <drush command="views-data-export">
-      <option name="root">${project.drupal.dir}</option>
-      <param>taxonomy_export</param>
-      <param>views_data_export_1</param>
-      <param>backup/taxonomy/taxonomy</param>
     </drush>
   </target>
 

@@ -79,77 +79,37 @@
         <drush command="migrate-auto-register">
           <option name="root">${project.drupal.dir}</option>
         </drush>
-        <drush command="migrate-import">
-          <option name="root">${project.drupal.dir}</option>
-          <param>IssueListNodes</param>
-        </drush>
-        <drush command="migrate-import">
-          <option name="root">${project.drupal.dir}</option>
-          <param>MediaNodes</param>
-        </drush>
-        <drush command="migrate-import">
-          <option name="root">${project.drupal.dir}</option>
-          <param>BookNodes</param>
-        </drush>
-        <drush command="migrate-import">
-          <option name="root">${project.drupal.dir}</option>
-          <param>IssueNodes</param>
-        </drush>
-        <drush command="migrate-import">
-          <option name="root">${project.drupal.dir}</option>
-          <param>IssueDetailsNodes</param>
-        </drush>
-        <drush command="migrate-import">
-          <option name="root">${project.drupal.dir}</option>
-          <param>MediaGroupNodes</param>
-        </drush>
-        <drush command="migrate-import">
-          <option name="root">${project.drupal.dir}</option>
-          <param>MediaAlbumNodes</param>
-        </drush>
-        <drush command="migrate-import">
-          <option name="root">${project.drupal.dir}</option>
-          <param>MediaImageNodes</param>
-        </drush>
-        <drush command="migrate-import">
-          <option name="root">${project.drupal.dir}</option>
-          <param>GroupNodes</param>
-        </drush>
+        <phingcall target="migrate-import" >
+          <property name="drupal.migrate" value="IssueListNodes" />
+        </phingcall>
+        <phingcall target="migrate-import" >
+          <property name="drupal.migrate" value="MediaNodes" />
+        </phingcall>
+        <phingcall target="migrate-import" >
+          <property name="drupal.migrate" value="BookNodes" />
+        </phingcall>
+        <phingcall target="migrate-import" >
+          <property name="drupal.migrate" value="IssueNodes" />
+        </phingcall>
+        <phingcall target="migrate-import" >
+          <property name="drupal.migrate" value="MediaGroupNodes" />
+        </phingcall>
+        <phingcall target="migrate-import" >
+          <property name="drupal.migrate" value="MediaAlbumNodes" />
+        </phingcall>
+        <phingcall target="migrate-import" >
+          <property name="drupal.migrate" value="MediaImageNodes" />
+        </phingcall>
         <echo msg="Restore nodes" />
       </then>
     </if>
   </target>
 
-  <target name="restore-users">
-    <if>
-    <available file="${env.backup.dir}/users/users" property="files_exists" />
-    <then>
-      <drush command="migrate-auto-register">
-        <option name="root">${project.drupal.dir}</option>
-      </drush>
-      <drush command="migrate-import">
-        <option name="root">${project.drupal.dir}</option>
-        <param>Users</param>
-      </drush>
-      <echo msg="Restore users" />
-    </then>
-    </if>
-  </target>
-
-  <target name="restore-taxonomy">
-    <if>
-      <available file="${env.backup.dir}/taxonomy/taxonomy" property="files_exists" />
-      <then>
-        <drush command="migrate-auto-register">
-          <option name="root">${project.drupal.dir}</option>
-        </drush>
-        <drush command="migrate-import">
-          <option name="root">${project.drupal.dir}</option>
-          <param>IssueStatusTaxonomy</param>
-        </drush>
-        <echo msg="Restore taxonomy" />
-      </then>
-    </if>
+  <target name="migrate-import">
+    <drush command="migrate-import">
+      <option name="root">${project.drupal.dir}</option>
+      <param>${drupal.migrate}</param>
+    </drush>
   </target>
 
 </project>

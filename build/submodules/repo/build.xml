@@ -2,7 +2,7 @@
 
   <target name="deploy" depends="pull">
     <phingcall target="slack-message">
-      <property name="slack.text" value="Git pull on the production server is complete." override="true" />
+      <property name="slack.text" value="Git pull on the production server has been finished." override="true" />
     </phingcall>
   </target>
 
@@ -54,20 +54,15 @@
   <!-- Short alias for commit-pull-push. Easier to remeber then cpp. -->
   <target name="ppc" depends="commit-pull-push" />
 
-  <target name="git-add">
-    <echo msg="Git add files" />
-    <exec command="git add ${env.project.dir}" />
-  </target>
-
   <target name="git-add-all">
     <echo msg="Git add all files" />
-    <exec command="git add -A ${env.project.dir}" />
+    <exec command="git add -A ${env.project.dir}" passthru="true" />
   </target>
 
   <target name="git-commit">
     <phingcall target="check-m" />
     <echo msg="Git commit" />
-    <exec command="git commit -m '${m}'" />
+    <exec command="git commit -m '${m}'" passthru="true" />
   </target>
 
   <target name="git-push">
@@ -76,6 +71,7 @@
       repository="${env.project.dir}"
       refspec="${repo.branch}"
       returnProperty="repo.push.retcode"
+      quiet="false"
       />
   </target>
 
@@ -86,12 +82,17 @@
       source="origin"
       refspec="${repo.branch}"
       returnProperty="repo.pull.retcode"
+      quiet="false"
       />
   </target>
 
   <target name="git-fetch">
     <echo msg="Git fetch"/>
-    <exec command="git fetch"/>
+    <gitfetch
+      repository="${env.project.dir}"
+      all="true"
+      quiet="false"
+      />
   </target>
 
   <target name="check-m">
@@ -111,7 +112,7 @@
   <target name="git-cherry-pick">
     <phingcall target="check-c" />
     <echo msg="Git cherry-pick"/>
-    <exec command="git cherry-pick '${c}'"/>
+    <exec command="git cherry-pick '${c}'" passthru="true" />
   </target>
 
   <target name="cherry-pick">

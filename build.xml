@@ -46,8 +46,6 @@
     <phingcall target="modules-enable">
       <property name="projects.installable" value="${project.drupal.module.settings}" />
     </phingcall>
-    <phingcall target="restore-users" />
-    <phingcall target="restore-taxonomy" />
     <phingcall target="restore-nodes" />
     <echo msg="Project installation finished" />
   </target>
