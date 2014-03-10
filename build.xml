@@ -86,6 +86,9 @@
 
   <target name="switch-modules" description="Enable and disable modules">
     <phingcall target="modules-enable">
+      <property name="projects.installable" value="${project.drupal.module.standard}" />
+    </phingcall>
+    <phingcall target="modules-enable">
       <property name="projects.installable" value="${project.drupal.module.contrib}" />
     </phingcall>
     <phingcall target="modules-disable">

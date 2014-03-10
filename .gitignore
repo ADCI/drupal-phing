@@ -1,6 +1,5 @@
 .idea/
 nbproject/
-project/*
 codesniffer.txt
 *.sql.gz
 .project

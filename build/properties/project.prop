@@ -27,10 +27,12 @@ project.drupal.site.name=site
 
 ; TODO: can we move these to .make file?
 ; Contrib and custom modules, featuress, themes
-project.drupal.module.contrib=admin_menu, ctools, ctools_automodal, ctools_automodal_admin, references, node_reference, user_reference, date, delta, devel, email, entity, features, strongarm, fe_block, field_group, flag, globalredirect, job_scheduler, jquery_update, libraries, logintoboggan, mailsystem, mediaelement, mimemail, node_field, plupload, rules, token, views, views_ui, views_data_export, filefield_sources, node_export, node_export_relation, migrate, migrate_ui, migrate_extras
+project.drupal.module.standard=node_reference, user_reference
+project.drupal.module.contrib=admin_menu, ctools, ctools_automodal, ctools_automodal_admin, date, delta, devel, email, entity, fe_block, features, field_group, filefield_sources, flag, globalredirect, job_scheduler, jquery_update, libraries, logintoboggan, mailsystem, mediaelement, mimemail, migrate, migrate_ui, migrate_extras, node_export, node_export_relation, node_field, plupload, references, rules, strongarm, token, views, views_ui, views_data_export
 project.drupal.module.custom=
-project.drupal.module.settings=features_site_settings, features_block_settings, features_ctools_automodal_settings
+
 ; Disable modules. Usually used to uninstall some unwanted standart modules.
 project.drupal.module.uninstall=dashboard, overlay, toolbar, color, help, rdf, search
+project.drupal.module.settings=
 project.drupal.theme.default=seven
 project.drupal.theme.custom=
