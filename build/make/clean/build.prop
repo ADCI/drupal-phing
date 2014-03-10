@@ -1,0 +1,9 @@
+; Contrib and custom modules, featuress, themes.
+project.drupal.module.standard=
+project.drupal.module.contrib=
+project.drupal.module.custom=
+project.drupal.module.settings=
+; Disable modules. Usually used to uninstall some unwanted standard modules.
+project.drupal.module.uninstall=
+project.drupal.theme.default=seven
+project.drupal.theme.custom=

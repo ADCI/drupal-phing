@@ -1,7 +1,10 @@
+; Project specific settings.
 ; TODO: rename? something like production_url?
 project.url=http://site.com
-; File name of make file to use.
-project.make.file=build.clean.make
+; Name of make file to use.
+project.make.name=standart1
+project.make.file=build/make/${project.make.name}/build.make
+project.make.prop=build/make/${project.make.name}/build.prop
 
 ; Drupal settings.
 ; Pathes to drupal dirs such as sites/default and sites/all/modules.
@@ -19,20 +22,8 @@ project.drupal.admin.name=admin
 project.drupal.admin.password=admin
 project.drupal.admin.mail=admin@admin.com
 
-; Site settings
+; Site settings.
 project.drupal.locale=en
 project.drupal.clean_url=1
 project.drupal.site.mail=site@admin.com
 project.drupal.site.name=site
-
-; TODO: can we move these to .make file?
-; Contrib and custom modules, featuress, themes
-project.drupal.module.standard=node_reference, user_reference
-project.drupal.module.contrib=admin_menu, ctools, ctools_automodal, ctools_automodal_admin, date, delta, devel, email, entity, fe_block, features, field_group, filefield_sources, flag, globalredirect, job_scheduler, jquery_update, libraries, logintoboggan, mailsystem, mediaelement, mimemail, migrate, migrate_ui, migrate_extras, node_export, node_export_relation, node_field, plupload, references, rules, strongarm, token, views, views_ui, views_data_export
-project.drupal.module.custom=
-
-; Disable modules. Usually used to uninstall some unwanted standart modules.
-project.drupal.module.uninstall=dashboard, overlay, toolbar, color, help, rdf, search
-project.drupal.module.settings=
-project.drupal.theme.default=seven
-project.drupal.theme.custom=

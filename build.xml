@@ -1,7 +1,13 @@
 <project name="druphing" default="init">
 
-  <property file="build/properties/project.prop"/>
   <property file="build/properties/env.prop"/>
+  <property file="build/properties/project.prop"/>
+  <if>
+    <available file="${project.make.prop}" property="file_exists"/>
+    <then>
+      <property file="${project.make.prop}"/>
+    </then>
+  </if>
   <property file="build/properties/repo.prop"/>
   <property file="build/properties/slack.prop"/>
   
