@@ -138,4 +138,20 @@
     </if>
   </target>
 
+  <target name="sniff-commit">
+    <exec command="git diff --cached --name-only --diff-filter=ACRM" returnProperty="repo.commit-files" />
+    <foreach list="${repo.commit-files}" param="env.codesniffer.sniff" target="sniff-commit-single" delimiter="\n" />
+  </target>
+
+  <target name="sniff-commit-single">
+    <echo msg="${repo.commit-file}" />
+    <phingcall target="run-sniff" />
+    <if>
+      <equals arg1="${codesniffer.status}" arg2="false" />
+      <then>
+        <echo msg="Please fix errors in you code and try to commit again."/>
+        <php expression="exit();"/>
+      </then>
+    </if>
+  </target>
 </project>
