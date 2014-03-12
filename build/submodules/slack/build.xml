@@ -1,0 +1,9 @@
+<project>
+  <target name="slack-message">
+    <http-request url="${slack.url}" verbose="true" method="POST" >
+      <config name="adapter" value="HTTP_Request2_Adapter_Curl"/>
+      <header name="user-agent" value="Phing HttpRequestTask"/>
+      <postparameter name="payload" value="${slack.payload}" />
+    </http-request>
+  </target>
+</project>

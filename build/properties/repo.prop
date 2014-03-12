@@ -1,4 +1,4 @@
-; It should be something like
+; TODO: It should be something like
 ; repo.src=https://github.com/ADCI/cmartbooks.git
 repo.src=
 repo.branch=master

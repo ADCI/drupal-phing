@@ -1,8 +1,13 @@
 <project name="codesniffer">
 
   <target name="sniff">
+    <phingcall target="sniff-cmd-file" />
+    <phingcall target="run-sniff" />
+  </target>
+
+  <target name="run-sniff">
     <echo msg="Sniffing ${env.codesniffer.sniff}" />
-    <!-- CodeSniffer does not empty report file if there are no errors. -->
+    <!-- CodeSniffer does not empty report file if there were no errors. -->
     <delete file="${env.codesniffer.result}"/>
     <exec command="phpcs --standard=${env.codesniffer.standard.path} ${env.project.dir}/${env.codesniffer.sniff} --report-file=${env.codesniffer.result}" returnProperty="codesniffer.retcode" passthru="true" />
     <if>
@@ -24,6 +29,20 @@
       <else>
         <property name="codesniffer.status" value="false" override="true" />
       </else>
+    </if>
+  </target>
+  
+  <target name="sniff-cmd-file">
+    <if>
+      <and>
+        <isset property="f" />
+        <not>
+          <equals arg1="${f}" arg2="" />
+        </not>
+      </and>
+      <then>
+        <property name="env.codesniffer.sniff" value="${f}" override="true" />
+      </then>
     </if>
   </target>
   

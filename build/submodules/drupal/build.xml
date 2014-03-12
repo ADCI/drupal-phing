@@ -87,22 +87,25 @@
     </drush>
   </target>
 
-  <target name="configure-settings-file" depends="delete-settings-file, copy-settings-file" description="Configure settings.php">
+  <target name="settings-file-restore" depends="settings-file-delete, settings-file-copy" description="Configure settings.php">
     <echo msg="Configure settings.php" />
   </target>
+  
+  <!-- Short alias for settings-file-restore -->
+  <target name="settings" depends="settings-file-restore" />
 
-  <target name="delete-settings-file" description="Delete settings file if it is existing">
+  <target name="settings-file-delete" description="Delete settings file if it exists">
     <if>
       <available file="${project.drupal.settings.dir}/${project.drupal.settings.file}" />
       <then>
-        <delete file="${project.drupal.settings.dir}/${project.drupal.settings.file}" quiet='true' />
+        <delete file="${project.drupal.settings.dir}/${project.drupal.settings.file}" quiet="true" />
         <echo msg="Delete settings.php file" />
       </then>
     </if>
   </target>
 
-  <target name="copy-settings-file" description="Copy settings file if it is existing">
-    <echo msg="Copy settings.php file" />
+  <target name="settings-file-copy" description="Copy settings file if it exists">
+    <echo msg="Copy file settings.php" />
     <copy file="${env.build.files.dir}/${project.drupal.settings.file}"
           tofile="${project.drupal.settings.dir}/${project.drupal.settings.file}"
           overwrite="true">

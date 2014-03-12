@@ -1,8 +1,7 @@
 ; Project specific settings.
-; TODO: rename? something like production_url?
-project.url=http://site.com
+project.production_url=http://site.com
 ; Name of make file to use.
-project.make.name=standart1
+project.make.name=standart
 project.make.file=build/make/${project.make.name}/build.make
 project.make.prop=build/make/${project.make.name}/build.prop
 

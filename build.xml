@@ -13,6 +13,7 @@
   
   <taskdef name="drush" classpath="build" classname="DrushTask"/>
 
+  <import file="build/submodules/slack/build.xml" />
   <import file="build/submodules/drupal/build.xml" />
   <import file="build/submodules/repo/build.xml" />
   <import file="build/submodules/backup/build.xml" />
@@ -24,7 +25,7 @@
   <target name="init" />
 
   <!-- Build/rebuild whole site. -->
-  <target name="build" depends="drush-make, configure-settings-file, site-install" />
+  <target name="build" depends="drush-make, settings-file-restore, site-install" />
 
   <target name="drush-make" depends="clear">
     <echo msg="Drupal make run" />
@@ -87,6 +88,7 @@
         <delete dir="${project.drupal.dir}"/>
       </then>
     </if>
+    <!-- TODO: someone need this? Can be removed? -->
     <!-- <property name="project.cleaned" value="true"/> -->
   </target>
 
@@ -107,18 +109,18 @@
 
   <target name="project-up" description="Build project">
     <phingcall target="db-restore" />
-    <phingcall target="configure-settings-file" />
+    <phingcall target="settings-file-restore" />
   </target>
 
   <!-- Short alias for project-up -->
-  <target name="pup" depends="project-up" description="Build project" />
+  <target name="pup" depends="project-up" />
 
-  <target name="slack-message">
-    <http-request url="${slack.url}" verbose="true" method="POST" >
-      <config name="adapter" value="HTTP_Request2_Adapter_Curl"/>
-      <header name="user-agent" value="Phing HttpRequestTask"/>
-      <postparameter name="payload" value="${slack.payload}" />
-    </http-request>
+  <target name="help">
+    <loadfile property="readme" file="README.txt" />
+    <echo msg="${readme}" />
   </target>
+
+  <!-- Short alias for help -->
+  <target name="h" depends="help" />
 
 </project>

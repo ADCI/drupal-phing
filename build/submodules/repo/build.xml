@@ -17,6 +17,9 @@
     <phingcall target="git-push" />
   </target>
 
+  <!-- Short alias for push. -->
+  <target name="p" depends="push" />
+
   <!-- Combine power of both pull and push in one single command! -->
   <target name="pull-push">
     <phingcall target="check-m" />
@@ -28,6 +31,9 @@
       </then>
     </if>
   </target>
+
+  <!-- Short alias for pull-push. -->
+  <target name="pp" depends="pull-push" />
 
   <target name="commit-pull-push">
     <phingcall target="check-m" />
@@ -41,12 +47,6 @@
       </then>
     </if>
   </target>
-
-  <!-- Short alias for push. -->
-  <target name="p" depends="push" />
-
-  <!-- Short alias for pull-push. -->
-  <target name="pp" depends="pull-push" />
 
   <!-- Short alias for commit-pull-push. -->
   <target name="cpp" depends="commit-pull-push" />

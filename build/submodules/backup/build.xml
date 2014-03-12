@@ -21,7 +21,7 @@
       <option name="result-file">${env.backup.dir}/${backup_name}</option>
     </drush>
     <phingcall target="slack-message">
-      <property name="slack.text" value="You can download new database dump here: ${project.url}/${backup_name}.gz" override="true" />
+      <property name="slack.text" value="You can download new database dump here: ${project.production_url}/${backup_name}.gz" override="true" />
     </phingcall>
   </target>
 

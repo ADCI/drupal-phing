@@ -1,9 +1,0 @@
-; Contrib and custom modules, featuress, themes.
-project.drupal.module.standard=node_reference, user_reference
-project.drupal.module.contrib=admin_menu, ctools, ctools_automodal, ctools_automodal_admin, date, delta, devel, email, entity, fe_block, features, field_group, filefield_sources, flag, globalredirect, job_scheduler, jquery_update, libraries, logintoboggan, mailsystem, mediaelement, mimemail, migrate, migrate_ui, migrate_extras, node_export, node_export_relation, node_field, plupload, references, rules, strongarm, token, views, views_ui, views_data_export
-project.drupal.module.custom=
-project.drupal.module.settings=
-; Disable modules. Usually used to uninstall some unwanted standard modules.
-project.drupal.module.uninstall=dashboard, overlay, toolbar, color, help, rdf, search
-project.drupal.theme.default=seven
-project.drupal.theme.custom=
