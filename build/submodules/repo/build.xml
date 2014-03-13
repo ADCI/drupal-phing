@@ -130,9 +130,9 @@
   </target>
 
   <target name="sniff-commit">
-    <exec command="git diff --cached --name-only --diff-filter=ACRM" returnProperty="repo.commit-files" />
+    <exec command="git diff --cached --name-only --diff-filter=ACRM" outputProperty="repo.commit-files" />
     <echo msg="${repo.commit-files}" />
-    <foreach list="${repo.commit-files}" param="env.codesniffer.sniff" target="sniff" delimiter="\n" />
+    <foreach list="${repo.commit-files}" param="env.codesniffer.sniff" target="sniff" delimiter="${line.separator}" />
   </target>
 
 </project>
