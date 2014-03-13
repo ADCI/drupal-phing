@@ -19,25 +19,19 @@
     <if>
       <available file="${env.codesniffer.result}" property="files_exists" />
       <then>
-        <delete file="${env.codesniffer.result}"/>
+        <delete file="${env.codesniffer.result}" quiet="true" />
       </then>
     </if>
     <exec command="phpcs --standard=${env.codesniffer.standard.path} ${env.project.dir}/${env.codesniffer.sniff} --report-file=${env.codesniffer.result}" returnProperty="codesniffer.retcode" passthru="true" />
     <if>
       <equals arg1="${codesniffer.retcode}" arg2="0" />
       <then>
-        <loadfile property="codesniffer.errors" file="${env.codesniffer.result}" />
-        <if>
-          <equals arg1="${codesniffer.errors}" arg2="" trim="true" />
-          <then>
-            <echo msg="File '${env.codesniffer.sniff}' sniffed OK." />
-          </then>
-          <else>
-            <echo msg="Sniffed some errors in file '${env.codesniffer.sniff}'. All errors has been logged to '${env.codesniffer.result}'." />
-            <php expression="exit();" />
-          </else>
-        </if>
+        <echo msg="File '${env.codesniffer.sniff}' sniffed OK." />
       </then>
+      <else>
+        <echo msg="Sniffed some errors in file '${env.codesniffer.sniff}'. All errors has been logged to '${env.codesniffer.result}'." />
+        <php expression="exit();" />
+      </else>
     </if>
   </target>
 
