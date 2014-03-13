@@ -24,12 +24,8 @@
   <target name="pull-push">
     <phingcall target="check-m" />
     <phingcall target="pull" />
-    <if>
-      <equals arg1="${repo.pull.retcode}" arg2="0" />
-      <then>
-        <phingcall target="push" />
-      </then>
-    </if>
+    <!-- TODO: exit if failed -->
+    <phingcall target="push" />
   </target>
 
   <!-- Short alias for pull-push. -->
@@ -40,12 +36,8 @@
     <phingcall target="git-add-all" />
     <phingcall target="git-commit" />
     <phingcall target="git-pull" />
-    <if>
-      <equals arg1="${repo.pull.retcode}" arg2="0" />
-      <then>
-        <phingcall target="git-push" />
-      </then>
-    </if>
+    <!-- TODO: exit if failed -->
+    <phingcall target="git-push" />
   </target>
 
   <!-- Short alias for commit-pull-push. -->
@@ -61,6 +53,7 @@
 
   <target name="git-commit">
     <phingcall target="check-m" />
+    <phingcall target="sniff-commit" />
     <echo msg="Git commit" />
     <exec command="git commit -m '${m}'" passthru="true" />
   </target>
@@ -70,7 +63,6 @@
     <gitpush
       repository="${env.project.dir}"
       refspec="${repo.branch}"
-      returnProperty="repo.push.retcode"
       quiet="false"
       />
   </target>
@@ -81,13 +73,12 @@
       repository="${env.project.dir}"
       source="origin"
       refspec="${repo.branch}"
-      returnProperty="repo.pull.retcode"
       quiet="false"
       />
   </target>
 
   <target name="git-fetch">
-    <echo msg="Git fetch"/>
+    <echo msg="Git fetch" />
     <gitfetch
       repository="${env.project.dir}"
       all="true"
@@ -104,23 +95,23 @@
         <equals arg1="${m}" arg2="" />
       </or>
       <then>
-        <echo msg='You should add commit message. Use command line option "-Dm=commit message here" (including quotes).'/>
-        <php expression="exit();"/>
+        <echo msg='You should add commit message. Use command line option "-Dm=commit message here" (including quotes).' />
+        <php expression="exit();" />
       </then>
     </if>
   </target>
 
   <target name="git-cherry-pick">
     <phingcall target="check-c" />
-    <echo msg="Git cherry-pick"/>
+    <echo msg="Git cherry-pick" />
     <exec command="git cherry-pick '${c}'" passthru="true" />
   </target>
 
   <target name="cherry-pick">
     <phingcall target="check-c" />
-    <phingcall target="git-fetch"/>
-    <phingcall target="git-cherry-pick"/>
-    <phingcall target="git-push"/>
+    <phingcall target="git-fetch" />
+    <phingcall target="git-cherry-pick" />
+    <phingcall target="git-push" />
   </target>
 
   <target name="check-c">
@@ -132,26 +123,15 @@
         <equals arg1="${c}" arg2="" />
       </or>
       <then>
-        <echo msg="You should add commit number. Use command line option -Dc=commit_number."/>
-        <php expression="exit();"/>
+        <echo msg="You should add commit number. Use command line option -Dc=commit_number." />
+        <php expression="exit();" />
       </then>
     </if>
   </target>
 
   <target name="sniff-commit">
     <exec command="git diff --cached --name-only --diff-filter=ACRM" returnProperty="repo.commit-files" />
-    <foreach list="${repo.commit-files}" param="env.codesniffer.sniff" target="sniff-commit-single" delimiter="\n" />
+    <foreach list="${repo.commit-files}" param="env.codesniffer.sniff" target="sniff-run" delimiter="\n" />
   </target>
 
-  <target name="sniff-commit-single">
-    <echo msg="${repo.commit-file}" />
-    <phingcall target="run-sniff" />
-    <if>
-      <equals arg1="${codesniffer.status}" arg2="false" />
-      <then>
-        <echo msg="Please fix errors in you code and try to commit again."/>
-        <php expression="exit();"/>
-      </then>
-    </if>
-  </target>
 </project>
