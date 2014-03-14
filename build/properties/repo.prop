@@ -1,5 +1,2 @@
-; TODO: It should be something like
-; repo.src=https://github.com/ADCI/cmartbooks.git
-repo.src=
 repo.branch=master
 repo.autosniff=true
