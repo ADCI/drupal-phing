@@ -11,35 +11,19 @@ DESCRIPTION
        everyday use.
        Extensivly use Phing http://www.phing.info
 
-DIRS AND FILES
-       project
-         Where all site's files are stored.
-
-       backup/database/dump.sql.gz
-         Just as file name implies: database dump file.
-
-       build, build.xml
-         Phing tasks.
-
-       coder
-         Codesniffer files.
-
-       codesniffer.txt
-         Codesniffer store any found errors in this file after sniffing.
-
-       README.txt
-         This help.
-
 COMMANDS
        We divide commands into GIT commands, Drupal commands, Database commands,
-       Site commands and Codesniffer commands.
+       Site commands, Codesniffer commands and Slack commands.
 
        Aliases for commands are in brackets.
 
        Other commands
 
-         help (h)
+         help
            Displays this help.
+
+         h
+           Display short help.
 
 
        GIT commands
@@ -86,6 +70,9 @@ COMMANDS
 
        Database commands
 
+         db-dump
+           Save database to backup/database/[date] - [time].sql.gz
+
          db-restore
            Restore database from backup/database/dump.sql.gz
 
@@ -107,6 +94,9 @@ COMMANDS
          settings-file-restore (settings)
            Restore file settings.php
 
+         run-tests
+           Run standard Drupal test.
+
        Site commands
 
          build
@@ -123,3 +113,26 @@ COMMANDS
          sniff "-Ds=path/to/file"
            Sniff single file and output results to codesniffer.txt file in
            project root directory.
+
+       Slack commands
+         slack-message "-Dslack.payload=Message"
+           Send message to Slack channel.
+
+DIRS AND FILES
+       project
+         Where all site's files are stored.
+
+       backup/database/dump.sql.gz
+         Just as file name implies: database dump file.
+
+       build, build.xml
+         Phing tasks.
+
+       coder
+         Codesniffer files.
+
+       codesniffer.txt
+         Codesniffer store any found errors in this file after sniffing.
+
+       README.txt
+         This help.
