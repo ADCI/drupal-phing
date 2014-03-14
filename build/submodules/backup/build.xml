@@ -16,7 +16,6 @@
   </target>
 
   <target name="backup-database">
-    <echo msg="${env.backup.db.dir}" />
     <phingcall target="cc"/>
     <tstamp />
     <property name="backup_name" value="${DSTAMP}-${TSTAMP}.sql" />
