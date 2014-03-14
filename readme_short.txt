@@ -1,0 +1,19 @@
+
+
+Short list of commands
+    push (p) "-Dm=Commit mesasge"                        Add all files to index, commit, push
+    pull                                                 The same as git pull origin branch_name
+    pull-push (pp) "-Dm=Commit mesasge"                  Pull then add files to index, commit, push
+    commit-pull-push (cpp, ppc) "-Dm=Commit mesasge"     Add files to index, commit, pull, push
+    cherry-pick "-Dc=commit_id"                          Apply changes from another branch
+    deploy                                               Used to pull on production server
+    db-dump                                              Save database dump to file
+    db-restore                                           Restore database from dump.sql.gz file
+    db-optimize ["-Denv.db.name=table_name"]             Defragment database or single table
+    cc                                                   Clear all cache
+    settings-file-restore (settings)                     Restore file settings.php
+    run-tests                                            Run standard Drupal test
+    build                                                Build/rebuild whole site
+    project-up (pup)                                     Restore db and file settings.php
+    sniff "-Ds=path/to/file"                             Check file for errors
+    slack-message "-Dslack.payload=Message"              Send message to Slack channel

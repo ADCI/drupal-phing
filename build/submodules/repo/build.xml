@@ -130,8 +130,25 @@
   </target>
 
   <target name="sniff-commit">
-    <exec command="git diff --cached --name-only --diff-filter=ACRM" outputProperty="repo.commit-files" />
-    <foreach list="${repo.commit-files}" param="env.codesniffer.sniff" target="sniff" delimiter="${line.separator}" />
+    <if>
+      <and>
+        <isset property="no-sniff" />
+        <or>
+          <equals arg1="${no-sniff}" arg2="1" />
+          <equals arg1="${no-sniff}" arg2="true" />
+        </or>
+      </and>
+      <then>
+        <property name="repo.autosniff" value="false" override="true" />
+      </then>
+    </if>
+    <if>
+      <equals arg1="${repo.autosniff}" arg2="true" />
+      <then>
+        <exec command="git diff --cached --name-only --diff-filter=ACRM" outputProperty="repo.commit-files" />
+        <foreach list="${repo.commit-files}" param="env.codesniffer.sniff" target="sniff" delimiter="${line.separator}" />
+      </then>
+    </if>
   </target>
 
 </project>

@@ -2,3 +2,4 @@
 ; repo.src=https://github.com/ADCI/cmartbooks.git
 repo.src=
 repo.branch=master
+repo.autosniff=true
