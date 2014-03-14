@@ -3,26 +3,28 @@
   <target name="backup" depends="db-dump, backup-custom-modules, backup-custom-themes" />
 
   <target name="dump">
-    <property name="env.backup.dir" value="${project.drupal.dir}" override="true" />
+    <property name="env.backup.db.dir" value="${project.drupal.dir}" override="true" />
     <phingcall target="backup-database"/>
+    <phingcall target="slack-message">
+      <property name="slack.text" value="You can download new database dump here: ${project.production_url}/${backup_name}.gz" override="true" />
+    </phingcall>
   </target>
 
   <target name="db-dump" depends="backup-dir-init">
+    <property name="env.backup.db.dir" value="${project.drupal.dir}" override="true" />
     <phingcall target="backup-database" />
   </target>
 
   <target name="backup-database">
+    <echo msg="${env.backup.db.dir}" />
     <phingcall target="cc"/>
     <tstamp />
     <property name="backup_name" value="${DSTAMP}-${TSTAMP}.sql" />
     <drush command="sql-dump" assume="yes">
       <option name="root">${project.drupal.dir}</option>
       <option name="gzip"></option>
-      <option name="result-file">${env.backup.dir}/${backup_name}</option>
+      <option name="result-file">${env.backup.db.dir}/${backup_name}</option>
     </drush>
-    <phingcall target="slack-message">
-      <property name="slack.text" value="You can download new database dump here: ${project.production_url}/${backup_name}.gz" override="true" />
-    </phingcall>
   </target>
 
   <target name="backup-custom-modules" depends="backup-dir-init">

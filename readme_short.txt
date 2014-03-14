@@ -7,8 +7,10 @@ Short list of commands
     commit-pull-push (cpp, ppc) "-Dm=Commit mesasge"     Add files to index, commit, pull, push
     cherry-pick "-Dc=commit_id"                          Apply changes from another branch
     deploy                                               Used to pull on production server
-    db-dump                                              Save database dump to file
-    db-restore                                           Restore database from dump.sql.gz file
+    dump                                                 Save database dump to project dir and notify others through Slack
+    db-dump                                              Save database dump to project dir
+    backup-database                                      Save database dump to backup/database dir
+    db-restore                                           Restore database from backup/database/dump.sql.gz file
     db-optimize ["-Denv.db.name=table_name"]             Defragment database or single table
     cc                                                   Clear all cache
     settings-file-restore (settings)                     Restore file settings.php

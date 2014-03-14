@@ -70,7 +70,13 @@ COMMANDS
 
        Database commands
 
+         dump
+           Save database to project dir and send message to slack channel.
+
          db-dump
+           Save database to project dir.
+
+         backup-database
            Save database to backup/database/[date] - [time].sql.gz
 
          db-restore
