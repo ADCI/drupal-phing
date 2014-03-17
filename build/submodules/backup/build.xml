@@ -8,7 +8,7 @@
       <property name="link_backup" value="true" />
     </phingcall>
     <phingcall target="slack-message">
-      <property name="slack.text" value="You can download new database dump here: ${project.production_url}/${backup_name}.gz" override="true" />
+      <property name="slack.text" value="You can download new database dump here: ${project.production_url}/${backup_name}.gz or you just can run 'phing dbu' on you local machine." override="true" />
     </phingcall>
   </target>
 

@@ -82,8 +82,11 @@ COMMANDS
          backup-database
            Save database to backup/database/[date] - [time].sql.gz
 
-         db-restore
+         db-restore (dbr)
            Restore database from backup/database/dump.sql.gz
+
+         db-restore-url (dbu)
+           Get last dump from production site and restore database with it.
 
          db-drop
            Drop database for the current site.

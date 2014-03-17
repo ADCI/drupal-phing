@@ -11,7 +11,8 @@ Short list of commands
     dump                                                 Save database dump to project dir and notify others through Slack
     db-dump                                              Save database dump to project dir
     backup-database                                      Save database dump to backup/database dir
-    db-restore                                           Restore database from backup/database/dump.sql.gz file
+    db-restore (dbr)                                     Restore database from backup/database/dump.sql.gz file
+    db-restore-url (dbu)                                 Get last dump from production site and restore database with it
     db-optimize ["-Denv.db.name=table_name"]             Defragment database or single table
     cc                                                   Clear all cache
     settings-file-restore (settings)                     Restore file settings.php
