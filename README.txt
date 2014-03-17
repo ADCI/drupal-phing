@@ -44,6 +44,9 @@ COMMANDS
            "phing pull" is much shorter then "git pull origin branch_name",
            don't you agree?
 
+         commit (c)
+           Update index and commit changes.
+
          pull-push (pp) "-Dm=Commit mesasge"
            Combine power of both pull and push in one single command.
 

@@ -3,6 +3,7 @@
 Short list of commands
     push (p) "-Dm=Commit mesasge"                        Add all files to index, commit, push
     pull                                                 The same as git pull origin branch_name
+    commit (c)                                           Update index and commit changes
     pull-push (pp) "-Dm=Commit mesasge"                  Pull then add files to index, commit, push
     commit-pull-push (cpp, ppc) "-Dm=Commit mesasge"     Add files to index, commit, pull, push
     cherry-pick "-Dc=commit_id"                          Apply changes from another branch
