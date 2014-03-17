@@ -11,14 +11,21 @@
   </target>
 
   <target name="push">
-    <phingcall target="check-m" />
-    <phingcall target="git-add-all" />
-    <phingcall target="git-commit" />
+    <phingcall target="commit" />
     <phingcall target="git-push" />
   </target>
 
   <!-- Short alias for push. -->
   <target name="p" depends="push" />
+
+  <target name="commit">
+    <phingcall target="check-m" />
+    <phingcall target="git-add-all" />
+    <phingcall target="git-commit" />
+  </target>
+
+  <!-- Short alias for push. -->
+  <target name="c" depends="commit" />
 
   <!-- Combine power of both pull and push in one single command! -->
   <target name="pull-push">
@@ -32,9 +39,7 @@
   <target name="pp" depends="pull-push" />
 
   <target name="commit-pull-push">
-    <phingcall target="check-m" />
-    <phingcall target="git-add-all" />
-    <phingcall target="git-commit" />
+    <phingcall target="commit" />
     <phingcall target="git-pull" />
     <!-- TODO: exit if failed -->
     <phingcall target="git-push" />
