@@ -1,12 +1,12 @@
 <project name="drupal">
-  
+
   <target name="cc">
     <drush command="cc" assume="yes">
       <option name="root">${project.drupal.dir}</option>
       <param>all</param>
     </drush>
   </target>
-  
+
   <target name="run-tests">
     <phingcall target="modules-enable">
       <property name="projects.installable" value="simpletest" />
@@ -16,24 +16,24 @@
       <param>--all</param>
     </drush>
   </target>
-  
+
   <target name="localize">
     <drush command="dl" assume="yes">
       <option name="root">${project.drupal.dir}</option>
       <param>l10n_update, drush_language</param>
-    </drush>    
+    </drush>
     <drush command="en" assume="yes">
       <option name="root">${project.drupal.dir}</option>
       <param>l10n_update</param>
-    </drush>      
+    </drush>
     <drush command="language-add" assume="yes">
       <option name="root">${project.drupal.dir}</option>
       <param>${project.drupal.locale}</param>
-    </drush> 
+    </drush>
     <phingcall target="cc"/>
     <drush command="language-enable" assume="yes">
       <option name="root">${project.drupal.dir}</option>
-      <param>${project.drupal.locale}</param> 
+      <param>${project.drupal.locale}</param>
     </drush>
     <drush command="language-default" assume="yes">
       <option name="root">${project.drupal.dir}</option>
@@ -90,7 +90,7 @@
   <target name="settings-file-restore" depends="settings-file-delete, settings-file-copy" description="Configure settings.php">
     <echo msg="Configure settings.php" />
   </target>
-  
+
   <!-- Short alias for settings-file-restore -->
   <target name="settings" depends="settings-file-restore" />
 
@@ -154,5 +154,5 @@
       </fileset>
     </chmod>
   </target>
-  
+
 </project>

@@ -22,6 +22,27 @@
   <!-- Short alias for db-restore. -->
   <target name="dbr" depends="db-restore" />
 
+  <target name="db-restore-url">
+    <echo msg="Restore project database from production site" />
+    <exec command="wget -O ${env.backup.db.dir}/dump.sql.gz ${project.production_url}/dump.sql.gz" passthru="true" checkreturn="true" />
+    <if>
+      <available file="${env.backup.db.dir}/dump.sql.gz" />
+      <then>
+        <phingcall target="db-drop" />
+        <phingcall target="db-create" />
+        <exec command="gunzip &lt; ${env.backup.db.dir}/dump.sql.gz | mysql -h ${env.db.host} -u${env.db.user} -p${env.db.password} ${env.db.name}" logoutput="true" checkreturn="true" passthru="true" />
+        <delete file="${env.backup.db.dir}/dump.sql.gz" />
+      </then>
+      <else>
+        <echo msg="Dump file ${env.backup.db.dir}/dump.sql.gz does not exists or inaccessible." />
+      </else>
+    </if>
+
+  </target>
+
+  <!-- Short alias for db-restore-url. -->
+  <target name="dbu" depends="db-restore-url" />
+
   <target name="db-optimize">
     <echo msg="Optimize database [${env.db.name}]." />
     <if>

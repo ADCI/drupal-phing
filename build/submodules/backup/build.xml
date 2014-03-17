@@ -4,7 +4,9 @@
 
   <target name="dump">
     <property name="env.backup.db.dir" value="${project.drupal.dir}" override="true" />
-    <phingcall target="backup-database"/>
+    <phingcall target="backup-database">
+      <property name="link_backup" value="true" />
+    </phingcall>
     <phingcall target="slack-message">
       <property name="slack.text" value="You can download new database dump here: ${project.production_url}/${backup_name}.gz" override="true" />
     </phingcall>
@@ -24,6 +26,12 @@
       <option name="gzip"></option>
       <option name="result-file">${env.backup.db.dir}/${backup_name}</option>
     </drush>
+    <if>
+      <equals arg1="${link_backup}" arg2="1" />
+      <then>
+        <exec command="ln -sf ${env.backup.db.dir}/${backup_name}.gz ${project.drupal.dir}/dump.sql.gz" passthru="false" />
+      </then>
+    </if>
   </target>
 
   <target name="backup-custom-modules" depends="backup-dir-init">
