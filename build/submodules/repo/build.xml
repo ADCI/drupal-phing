@@ -58,7 +58,7 @@
 
   <target name="git-commit">
     <phingcall target="check-m" />
-    <phingcall target="sniff-commit" />
+    <!-- <phingcall target="sniff-commit" /> -->
     <echo msg="Git commit" />
     <exec command="git commit -m '${m}'" passthru="true" />
   </target>
