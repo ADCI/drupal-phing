@@ -16,6 +16,9 @@ project.drupal.settings.dir=${project.drupal.default.dir}
 project.drupal.files.dir=${project.drupal.default.dir}/files
 project.drupal.theme.dir=${project.drupal.dir}/sites/all/themes
 project.drupal.settings.file=settings.php
+; This file contains some runtime settings for Drush. Specifically we use it to filter out cache
+; tables on database backup.
+project.drupal.drushrc.file=drushrc.php
 
 ; Admin account.
 project.drupal.admin.name=admin
