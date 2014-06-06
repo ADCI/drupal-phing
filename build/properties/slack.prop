@@ -1,5 +1,5 @@
-slack.team=adci
+slack.team=
 slack.token=
 slack.url=https://${slack.team}.slack.com/services/hooks/incoming-webhook?token=${slack.token}
-slack.text=Dummy text
-slack.payload={"text": "${slack.text}"}
+slack.channel=
+slack.payload={"text": "${slack.text}", "channel": "${slack.channel}"}

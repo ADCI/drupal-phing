@@ -1,0 +1,36 @@
+<project name="phpcpd">
+
+  <target name="pcpd">
+    <!-- Use command line option if present -->
+    <if>
+      <and>
+        <isset property="s" />
+        <not>
+          <equals arg1="${s}" arg2="" />
+        </not>
+      </and>
+      <then>
+        <property name="env.phpcpd.pcpd" value="${s}" override="true" />
+      </then>
+    </if>
+
+    <echo msg="PHP Copy/Past Detector ${env.phpcpd.pcpd}" />
+    <if>
+      <available file="${env.phpcpd.result}" property="files_exists" />
+      <then>
+        <delete file="${env.phpcpd.result}" quiet="true" />
+      </then>
+    </if>
+    <exec command="phpcpd --log-pmd=${env.phpcpd.result} --quiet --names=*.module,*.inc ${env.phpcpd.pcpd}" returnProperty="phpcpd.retcode" passthru="true" />
+    <if>
+      <equals arg1="${phpcpd.retcode}" arg2="0" />
+      <then>
+        <echo msg="${env.phpcpd.pcpd} PHP Copy/Past Detector OK." />
+      </then>
+      <else>
+        <echo msg="PHP Copy/Past Detector has some reports for '${env.phpcpd.pcpd}'. All reports have been logged to '${env.phpcpd.result}'." />
+      </else>
+    </if>
+  </target>
+
+</project>

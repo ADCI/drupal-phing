@@ -2,7 +2,7 @@
 
   <target name="restore" depends="restore-custom-modules, restore-features-modules, restore-custom-themes, patches-apply" />
 
-  <target name="restore-custom-modules" depends="restore-custom-dir-init">
+  <target name="restore-custom-modules" depends="ensure-custom-dir">
     <phingcall target="delete-folder">
       <property name="folder.deletable" value="${project.drupal.custom.dir}" />
     </phingcall>
@@ -14,19 +14,25 @@
     <echo msg="Custom modules were restore." />
   </target>
 
-  <target name="restore-features-modules" depends="restore-features-dir-init">
+  <target name="restore-features-modules">
     <phingcall target="delete-folder">
       <property name="folder.deletable" value="${project.drupal.features.dir}" />
     </phingcall>
-    <copy todir="${project.drupal.features.dir}">
-      <fileset dir="${env.backup.dir}/modules/features">
-        <include name="**"/>
-      </fileset>
-    </copy>
+    <if>
+      <available file="${env.backup.dir}/modules/features" property="dir_exists" />
+      <then>
+        <phingcall target="ensure-features-dir" />
+        <copy todir="${project.drupal.features.dir}">
+          <fileset dir="${env.backup.dir}/modules/features">
+            <include name="**"/>
+          </fileset>
+        </copy>
+      </then>
+    </if>
     <echo msg="Features modules were restore." />
   </target>
-  
-  <target name="restore-custom-themes" depends="restore-theme-dir-init">
+
+  <target name="restore-custom-themes" depends="ensure-theme-dir">
     <phingcall target="delete-folder">
       <property name="folder.deletable" value="${project.drupal.theme.dir}" />
     </phingcall>
@@ -37,7 +43,7 @@
     </copy>
   </target>
 
-  <target name="restore-project-files" depends="restore-files-dir-init">
+  <target name="restore-project-files" depends="ensure-files-dir">
     <phingcall target="delete-folder">
       <property name="folder.deletable" value="${project.drupal.files.dir}" />
     </phingcall>
@@ -48,25 +54,25 @@
     </copy>
   </target>
 
-  <target name="restore-custom-dir-init">
+  <target name="ensure-custom-dir">
     <phingcall target="create-folder">
       <property name="folder.creatable" value="${project.drupal.custom.dir}" />
     </phingcall>
   </target>
 
-  <target name="restore-features-dir-init">
+  <target name="ensure-features-dir">
     <phingcall target="create-folder">
       <property name="folder.creatable" value="${project.drupal.features.dir}" />
     </phingcall>
   </target>
 
-  <target name="restore-theme-dir-init">
+  <target name="ensure-theme-dir">
     <phingcall target="create-folder">
       <property name="folder.creatable" value="${project.drupal.theme.dir}" />
     </phingcall>
   </target>
 
-  <target name="restore-files-dir-init">
+  <target name="ensure-files-dir">
     <phingcall target="create-folder">
       <property name="folder.creatable" value="${project.drupal.files.dir}" />
     </phingcall>
@@ -110,6 +116,35 @@
       <option name="root">${project.drupal.dir}</option>
       <param>${drupal.migrate}</param>
     </drush>
+  </target>
+
+  <target name="features-apply">
+    <if>
+      <and>
+        <isset property="project.drupal.module.features" />
+        <not>
+          <equals arg1="${project.drupal.module.features}" arg2="" />
+        </not>
+      </and>
+      <then>
+        <phingcall target="features-enable" />
+        <foreach list="${project.drupal.module.features}" param="fe" target="feature-apply" delimiter="," />
+        <phingcall target="cc" />
+      </then>
+    </if>
+  </target>
+
+  <target name="feature-apply">
+    <drush command="features-revert" assume="yes">
+      <option name="root">${project.drupal.dir}</option>
+      <param>${fe}</param>
+    </drush>
+  </target>
+
+  <target name="features-enable">
+    <phingcall target="modules-enable">
+      <property name="projects.installable" value="${project.drupal.module.features}" />
+    </phingcall>
   </target>
 
 </project>

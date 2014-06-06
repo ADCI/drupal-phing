@@ -1,0 +1,36 @@
+<project name="phpmd">
+
+  <target name="pmd">
+    <!-- Use command line option if present -->
+    <if>
+      <and>
+        <isset property="s" />
+        <not>
+          <equals arg1="${s}" arg2="" />
+        </not>
+      </and>
+      <then>
+        <property name="env.phpmd.pmd" value="${s}" override="true" />
+      </then>
+    </if>
+
+    <echo msg="PHP Mess Detector ${env.phpmd.pmd}" />
+    <if>
+      <available file="${env.phpmd.result}" property="files_exists" />
+      <then>
+        <delete file="${env.phpmd.result}" quiet="true" />
+      </then>
+    </if>
+    <exec command="phpmd ${env.phpmd.pmd} xml cleancode,codesize,controversial,design,naming,unusedcode --reportfile ${env.phpmd.result}" returnProperty="phpmd.retcode" passthru="true" />
+    <if>
+      <equals arg1="${phpmd.retcode}" arg2="0" />
+      <then>
+        <echo msg="${env.phpmd.pmd} PHP Mess Detector OK." />
+      </then>
+      <else>
+        <echo msg="PHP Mess Detector has some reports for '${env.phpmd.pmd}'. All reports have been logged to '${env.phpmd.result}'." />
+      </else>
+    </if>
+  </target>
+
+</project>

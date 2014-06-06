@@ -1,11 +1,5 @@
 <project name="repo">
 
-  <target name="deploy" depends="pull">
-    <phingcall target="slack-message">
-      <property name="slack.text" value="Git pull on the production server has been finished." override="true" />
-    </phingcall>
-  </target>
-
   <target name="pull">
     <phingcall target="git-pull" />
   </target>
@@ -24,7 +18,7 @@
     <phingcall target="git-commit" />
   </target>
 
-  <!-- Short alias for push. -->
+  <!-- Short alias for commit. -->
   <target name="c" depends="commit" />
 
   <!-- Combine power of both pull and push in one single command! -->

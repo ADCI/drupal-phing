@@ -1,0 +1,8 @@
+<project name="redis">
+  <target name="redis-flush">
+    <!-- TODO: should be changed to something like redis-cli select ${db_number} | redis-cli flushdb -->
+    <exec command="redis-cli flushall" logoutput="false" checkreturn="false" passthru="false" />
+    <echo msg="Redis cache has been flushed." />
+  </target>
+
+</project>

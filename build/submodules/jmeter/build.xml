@@ -1,0 +1,27 @@
+<project name="jmeter">
+
+  <target name="jmeter-tests">
+    <echo msg="Run Jmeter tests." />
+    <foreach param="jmeter.test" target="run-jmeter-test">
+      <fileset dir="${jmeter.tests_dir}">
+        <include name="*.jmx"/>
+      </fileset>
+    </foreach>
+  </target>
+  
+  <target name="run-jmeter-test">
+    <echo msg="Running test: ${jmeter.test}." />
+    <phingcall target="create-folder">
+      <property name="folder.creatable" value="${jmeter.logs_dir}" />
+    </phingcall>
+    <property name="jmetr.log" value="${jmeter.logs_dir}/${jmeter.test}.xml" override="true" />
+    <if>
+      <available file="${jmetr.log}" />
+      <then>
+        <delete file="${jmetr.log}" quiet="true" />
+      </then>
+    </if>
+    <exec command="jmeter -J jmeter.save.saveservice.output_format=${jmeter.output_format} -j ${jmeter.logs_dir}/jmeter.log -n -t ${jmeter.tests_dir}/${jmeter.test} -l ${jmetr.log} " logoutput="false" checkreturn="true" passthru="false" />
+  </target>
+
+</project>

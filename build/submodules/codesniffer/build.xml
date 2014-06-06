@@ -22,15 +22,29 @@
         <delete file="${env.codesniffer.result}" quiet="true" />
       </then>
     </if>
-    <exec command="phpcs --standard=${env.codesniffer.standard.path} ${env.project.dir}/${env.codesniffer.sniff} --report-file=${env.codesniffer.result}" returnProperty="codesniffer.retcode" passthru="true" />
+    <if>
+      <and>
+        <isset property="out" />
+        <not>
+          <equals arg1="${out}" arg2="" />
+        </not>
+      </and>
+      <then>
+        <property name="codesniffer.report" value="${out}" override="true" />
+      </then>
+      <else>
+        <property name="codesniffer.report" value="checkstyle" override="true" />
+      </else>
+    </if>
+
+    <exec command="phpcs --standard=${env.codesniffer.standard.path} ${env.codesniffer.sniff} --report-file=${env.codesniffer.result} --report=${codesniffer.report}" returnProperty="codesniffer.retcode" passthru="true"  />
     <if>
       <equals arg1="${codesniffer.retcode}" arg2="0" />
       <then>
-        <echo msg="File '${env.codesniffer.sniff}' sniffed OK." />
+        <echo msg="${env.codesniffer.sniff} sniffed OK." />
       </then>
       <else>
-        <echo msg="Sniffed some errors in file '${env.codesniffer.sniff}'. All errors has been logged to '${env.codesniffer.result}'." />
-        <php expression="exit();" />
+        <echo msg="Sniffed some errors in '${env.codesniffer.sniff}'. All errors has been logged to '${env.codesniffer.result}'." />
       </else>
     </if>
   </target>

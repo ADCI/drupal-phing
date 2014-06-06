@@ -1,2 +1,2 @@
 repo.branch=master
-repo.autosniff=true
+repo.autosniff=false

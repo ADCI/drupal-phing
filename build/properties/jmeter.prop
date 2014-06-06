@@ -1,0 +1,3 @@
+jmeter.tests_dir=${env.project.dir}/jmeter
+jmeter.logs_dir=${env.project.dir}/test-results/jmeter
+jmeter.output_format=xml

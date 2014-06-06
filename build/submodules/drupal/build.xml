@@ -3,7 +3,13 @@
   <target name="cc">
     <drush command="cc" assume="yes">
       <option name="root">${project.drupal.dir}</option>
-      <param>all</param>
+      <param>${projects.drush.cache}</param>
+    </drush>
+  </target>
+
+  <target name="updatedb">
+    <drush command="updatedb" assume="yes">
+      <option name="root">${project.drupal.dir}</option>
     </drush>
   </target>
 
@@ -153,6 +159,30 @@
         <include name="sites/*"/>
       </fileset>
     </chmod>
+  </target>
+
+  <target name="aggregation-off">
+    <echo msg="Disable aggregation of css and javascript files." />
+    <drush command="vset" assume="yes">
+      <param>preprocess_css FALSE</param>
+      <option name="root">${project.drupal.dir}</option>
+    </drush>
+    <drush command="vset" assume="yes">
+      <param>preprocess_js FALSE</param>
+      <option name="root">${project.drupal.dir}</option>
+    </drush>
+  </target>
+
+  <target name="devel-output-for-all">
+    <echo msg="Enable access developer information for all user roles" />
+    <drush command="sql-query">
+      <param>"INSERT INTO role_permission VALUES (1,'access devel information','devel')"</param>
+      <option name="root">${project.drupal.dir}</option>
+    </drush>
+    <drush command="sql-query">
+      <param>"INSERT INTO role_permission VALUES (2,'access devel information','devel')"</param>
+      <option name="root">${project.drupal.dir}</option>
+    </drush>
   </target>
 
 </project>

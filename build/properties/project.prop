@@ -1,5 +1,6 @@
 ; Project specific settings.
 project.production_url=http://site.com
+project.stage_url=http://stage.com
 ; Name of make file to use.
 project.make.name=standart
 project.make.file=build/make/${project.make.name}/build.make
@@ -26,3 +27,9 @@ project.drupal.locale=en
 project.drupal.clean_url=1
 project.drupal.site.mail=site@admin.com
 project.drupal.site.name=site
+
+; Drush settings
+projects.drush.cache=all
+
+; Simpletests to run with run-custom-tests command.
+project.tests=

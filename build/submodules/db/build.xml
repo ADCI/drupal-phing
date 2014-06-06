@@ -14,44 +14,88 @@
     </pdo>
   </target>
 
-  <target name="db-restore" depends="db-drop, db-create">
-    <echo msg="Restore project database" />
-    <exec command="gunzip &lt; ${env.backup.db.dir}/${env.db.name}.sql.gz | mysql -h ${env.db.host} -u${env.db.user} -p${env.db.password} ${env.db.name}" logoutput="true" checkreturn="true" passthru="true" />
-  </target>
-
-  <!-- Short alias for db-restore. -->
-  <target name="dbr" depends="db-restore" />
-
-  <target name="db-restore-url">
-    <echo msg="Restore project database from production site" />
-    <exec command="wget -O ${env.backup.db.dir}/dump.sql.gz ${project.production_url}/dump.sql.gz" passthru="true" checkreturn="true" />
+  <target name="db-restore">
     <if>
       <available file="${env.backup.db.dir}/dump.sql.gz" />
       <then>
         <phingcall target="db-drop" />
         <phingcall target="db-create" />
+        <phingcall target="redis-flush" />
+        <echo msg="Restore project database" />
         <exec command="gunzip &lt; ${env.backup.db.dir}/dump.sql.gz | mysql -h ${env.db.host} -u${env.db.user} -p${env.db.password} ${env.db.name}" logoutput="true" checkreturn="true" passthru="true" />
-        <delete file="${env.backup.db.dir}/dump.sql.gz" />
       </then>
       <else>
         <echo msg="Dump file ${env.backup.db.dir}/dump.sql.gz does not exists or inaccessible." />
       </else>
     </if>
+  </target>
 
+  <!-- Short alias for db-restore. -->
+  <target name="dbr" depends="db-restore" />
+
+  <target name="db-restore-from-local" depends="db-restore" />
+
+  <!-- Short alias for db-restore-from-local. -->
+  <target name="dbrl" depends="db-restore-from-local" />
+
+  <target name="db-restore-url" depends="db-backup-dir-create">
+    <echo msg="Get database dump from production site." />
+    <if>
+      <or>
+        <not>
+          <isset property="db.url" />
+        </not>
+        <equals arg1="${db_url}" arg2="" />
+      </or>
+      <then>
+        <property name="db.url" value="${project.stage_url}" override="true" />
+      </then>
+    </if>
+    <exec command="wget -O ${env.backup.db.dir}/dump.sql.gz ${db.url}/dump.sql.gz" passthru="true" checkreturn="true" />
+    <phingcall target="db-restore" />
+  </target>
+
+  <target name="db-backup-dir-create">
+    <phingcall target="create-folder">
+      <property name="folder.creatable" value="${env.backup.db.dir}" />
+    </phingcall>
   </target>
 
   <!-- Short alias for db-restore-url. -->
   <target name="dbu" depends="db-restore-url" />
 
+  <target name="db-restore-from-stage">
+    <phingcall target="db-restore-url">
+      <property name="db.url" value="${project.stage_url}" override="true" />
+    </phingcall>
+  </target>
+
+  <!-- Short alias for db-restore-from-stage. -->
+  <target name="dbrs" depends="db-restore-from-stage" />
+
+  <target name="db-restore-from-production">
+    <phingcall target="db-restore-url">
+      <property name="db.url" value="${project.production_url}" override="true" />
+    </phingcall>
+  </target>
+
+  <!-- Short alias for db-restore-from-production. -->
+  <target name="dbrp" depends="db-restore-from-production" />
+
   <target name="db-optimize">
     <echo msg="Optimize database [${env.db.name}]." />
     <if>
-      <equals arg1="${env.db.optimize_tables}" arg2="" />
+      <and>
+        <isset property="tables" />
+        <not>
+          <equals arg1="${tables}" arg2="" />
+        </not>
+      </and>
       <then>
-        <exec command="mysqlcheck -h ${env.db.host} -u${env.db.user} -p${env.db.password} -o ${env.db.name}" logoutput="true" checkreturn="true" passthru="true" />
+        <exec command="mysql -h ${env.db.host} -u${env.db.user} -p${env.db.password} ${env.db.name} -e 'OPTIMIZE TABLE ${tables}'" logoutput="true" checkreturn="true" passthru="true" />
       </then>
       <else>
-        <exec command="mysql -h ${env.db.host} -u${env.db.user} -p${env.db.password} ${env.db.name} -e 'OPTIMIZE TABLE ${env.db.optimize_tables}'" logoutput="true" checkreturn="true" passthru="true" />
+        <exec command="mysqlcheck -h ${env.db.host} -u${env.db.user} -p${env.db.password} -o ${env.db.name}" logoutput="true" checkreturn="true" passthru="true" />
       </else>
     </if>
   </target>

@@ -1,5 +1,81 @@
 <project name="project">
-  <!-- PROJECT SPECIFIED TARGETS -->
 
+  <target name="do-deploy">
+    <phingcall target="pull" />
+    <phingcall target="updatedb" />
+    <phingcall target="features-apply" />
+  </target>
+
+  <target name="deploy-production" depends="do-deploy">
+    <phingcall target="slack-message">
+      <property name="slack.text" value="Deploy on ${project.production_url} has been finished." override="true" />
+    </phingcall>
+    <phingcall target="dump-production" />
+  </target>
+
+  <!-- The only real deploy is deploy on production server. -->
+  <target name="deploy" depends="deploy-production" />
+
+  <target name="deploy-stage" depends="do-deploy">
+    <phingcall target="slack-message">
+      <property name="slack.text" value="Deploy on ${project.stage_url} has been finished." override="true" />
+    </phingcall>
+    <phingcall target="dump-stage" />
+  </target>
+
+  <target name="deploy-local">
+    <phingcall target="updatedb" />
+    <phingcall target="features-apply" />
+  </target>
+
+  <target name="run-custom-tests" depends="testsuite-dir-init">
+    <if>
+      <and>
+        <isset property="p" />
+        <not>
+          <equals arg1="${p}" arg2="" />
+        </not>
+      </and>
+      <then>
+        <echo msg="Run Simpletests" />
+        <drush command="en" assume="yes">
+          <option name="root">${project.drupal.dir}</option>
+          <param>simpletest</param>
+        </drush>
+        <drush command="test-run" assume="yes">
+          <param>-l http://127.0.0.1:${p}</param>
+          <param>${project.tests}</param>
+          <option name="root">${project.drupal.dir}</option>
+          <option name="xml">${env.testsuite.dir}</option>
+        </drush>
+      </then>
+      <else>
+        <echo msg='You should add port. Use argument -Dp=port_here.' />
+      </else>
+    </if>
+  </target>
+
+  <target name="testsuite-dir-init">
+    <phingcall target="create-folder">
+      <property name="folder.creatable" value="${env.testsuite.dir}" />
+    </phingcall>
+  </target>
+
+  <target name="project-environment">
+    <echo msg="Apply environment settings." />
+    <if>
+      <or>
+        <not>
+          <isset property="e" />
+        </not>
+        <equals arg1="${e}" arg2="${env.name.local}" />
+        <equals arg1="${e}" arg2="" />
+      </or>
+      <then>
+        <phingcall target="aggregation-off" />
+        <phingcall target="devel-output-for-all" />
+      </then>
+    </if>
+  </target>
 
 </project>

@@ -1,28 +1,51 @@
 <project name="backup">
 
-  <target name="backup" depends="db-dump, backup-custom-modules, backup-custom-themes" />
+  <target name="backup" depends="dump-local, backup-custom-modules, backup-custom-themes" />
 
   <target name="dump">
     <property name="env.backup.db.dir" value="${project.drupal.dir}" override="true" />
     <phingcall target="backup-database">
-      <property name="link_backup" value="true" />
-      <property name="show_message" value="true" />
+      <property name="link_backup" value="true" override="true" />
+      <property name="show_message" value="true" override="true" />
     </phingcall>
   </target>
 
-  <target name="db-dump" depends="backup-dir-init">
+  <!-- The same as dump. -->
+  <target name="dump-production">
+    <property name="env.backup.db.dir" value="${project.drupal.dir}" override="true" />
+    <phingcall target="backup-database">
+      <property name="link_backup" value="true" override="true" />
+      <property name="show_message" value="true" override="true" />
+      <property name="project_url" value="${project.production_url}"  override="true" />
+      <property name="restore_command" value="dbrp" override="true" />
+    </phingcall>
+  </target>
+
+  <target name="dump-stage">
+    <property name="env.backup.db.dir" value="${project.drupal.dir}" override="true" />
+    <phingcall target="backup-database">
+      <property name="link_backup" value="true" override="true" />
+      <property name="show_message" value="true" override="true" />
+      <property name="project_url" value="${project.stage_url}" override="true" />
+      <property name="restore_command" value="dbu (or dbrs)" override="true" />
+    </phingcall>
+  </target>
+
+  <target name="dump-local" depends="backup-dir-init">
     <property name="env.backup.db.dir" value="${project.drupal.dir}" override="true" />
     <phingcall target="backup-database" />
   </target>
 
   <target name="backup-database">
-    <phingcall target="cc"/>
+    <!-- No need to clear cache. We do not dump content of cache tables anyway. -->
+    <!-- <phingcall target="cc"/> -->
     <tstamp />
     <property name="backup_name" value="${DSTAMP}-${TSTAMP}.sql" />
     <drush command="sql-dump" assume="yes">
       <option name="root">${project.drupal.dir}</option>
       <option name="gzip"></option>
       <option name="result-file">${env.backup.db.dir}/${backup_name}</option>
+      <option name="structure-tables-key">common</option>
     </drush>
     <if>
       <equals arg1="${link_backup}" arg2="1" />
@@ -31,10 +54,32 @@
       </then>
     </if>
     <if>
-      <equals arg1="${show_message" arg2="1" />
+      <equals arg1="${show_message}" arg2="1" />
       <then>
+        <if>
+          <or>
+            <not>
+              <isset property="project_url" />
+            </not>
+            <equals arg1="${project_url}" arg2="" />
+          </or>
+          <then>
+            <property name="project_url" value="${project.production_url}" />
+          </then>
+        </if>
+        <if>
+          <or>
+            <not>
+              <isset property="restore_command" />
+            </not>
+            <equals arg1="${restore_command}" arg2="" />
+          </or>
+          <then>
+            <property name="restore_command" value="dbrp" />
+          </then>
+        </if>
         <phingcall target="slack-message">
-          <property name="slack.text" value="You can download new database dump here: ${project.production_url}/${backup_name}.gz or you just can run 'phing dbu' on you local machine." override="true" />
+          <property name="slack.text" value="You can download new database dump here: ${project_url}/${backup_name}.gz or you just can run 'phing ${restore_command}' on you local machine." override="true" />
         </phingcall>
       </then>
     </if>
@@ -81,6 +126,9 @@
       <fileset dir="${project.drupal.files.dir}">
         <include name="**"/>
         <exclude name="styles/**"/>
+        <exclude name="css/**"/>
+        <exclude name="js/**"/>
+        <exclude name="backups/**"/>
       </fileset>
     </copy>
   </target>
