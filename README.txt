@@ -28,7 +28,7 @@ COMMANDS
 
        GIT commands
 
-         push (p)  "-Dm=Commit mesasge"
+         push (p) "-Dm=Commit mesasge"
            Usual workflow with git: add all files to commit, commit files, push
            files. This command do it all. Very simple!
            But don't ever forget to add commit message! And if you want spaces
@@ -44,7 +44,7 @@ COMMANDS
            "phing pull" is much shorter then "git pull origin branch_name",
            don't you agree?
 
-         commit (c)
+         commit (c) "-Dm=Commit mesasge"
            Update index and commit changes.
 
          pull-push (pp) "-Dm=Commit mesasge"
@@ -54,7 +54,7 @@ COMMANDS
            This simple command covers most everyday needs of a developer to push
            something to repo.
            Sometimes push returns with error because someone pushed something to
-           repo before you and also changed some files you were working on.
+           repo before you and someone else changed some files you were working on.
            This command takes care of this. First it commits your changes. Then
            it pulls changes from repo and then pushes you changes to repo.
 
@@ -65,28 +65,28 @@ COMMANDS
            run this command with id of commit with your changes.
            That's all. Both branches have your changes.
 
-         deploy
-           This command can be used to pull changes to production server. But
-           besides pulling it notifies other developers through slack about it's
-           actions.
-
 
        Database commands
 
-         dump
-           Save database to project dir and send message to slack channel.
+         dump-production (dump)
+         dump-stage
+           Save database to project/dump.sql.gz and send message to slack channel.
 
-         db-dump
-           Save database to project dir.
+         dump-local
+           Save database to project/dump.sql.gz
 
          backup-database
            Save database to backup/database/[date] - [time].sql.gz
 
          db-restore (dbr)
-           Restore database from backup/database/dump.sql.gz
+         db-restore-from-local (dbrl)
+           Restore database from backup/database/dump.sql.gz.
+           Use command line argument -De=live to skip css/js aggregation change.
 
-         db-restore-url (dbu)
-           Get last dump from production site and restore database with it.
+         db-restore-from-stage (dbrs), db-restore-url (dbu)
+         db-restore-from-production (dbrp)
+           Get last dump from stage or production site and restore database.
+           Use command line argument -De=live to skip css/js aggregation change.
 
          db-drop
            Drop database for the current site.
@@ -98,6 +98,7 @@ COMMANDS
            Optimize whole database or single table. Think of it as database
            defragmentation.
 
+
        Drupal commands
 
          cc
@@ -107,7 +108,23 @@ COMMANDS
            Restore file settings.php
 
          run-tests
-           Run standard Drupal test.
+           Run standard Drupal tests.
+
+         run-custom-tests
+           Run custom tests specified in project.tests. 
+
+         jmeter-tests
+           Run Jmeter tests.
+
+         restore-project-files
+           Restore project files.
+
+         project-environment
+           Enable some useful for development but unneded for production server
+           features:
+             - Enable devel debug output for all.
+             - Disable CSS/Js aggregation.
+
 
        Site commands
 
@@ -116,23 +133,55 @@ COMMANDS
            drupal, restore custom modules/themes if needed, restore nodes,
            settings if needed.
 
-         project-up (pup)
-           Restore database from backup/database/dump.sql.gz and restore file
-           settings.php.
+         project-up (pu) [-Dsource=<stage,production,local>]
+           Download last db dump from production or stage to
+           backup/database/dump.sql.gz and restore database from it. Also restore
+           file settings.php. Do not download anything if source set to "local".
+           Source set to "stage" by default.
+
+         features-apply
+           Apply features.
+
+         updatedb
+           Apply database updates.
+
+         deploy-production (deploy)
+         deploy-stage
+         deploy-local
+           These commands can be used to pull, apply features and updates to
+           production, stage or local server. First two also notify other
+           developers through slack about their actions.
+
 
        Codesniffer commands
 
-         sniff "-Ds=path/to/file"
-           Sniff single file and output results to codesniffer.txt file in
+         sniff "-Ds=path/to/file_or_dir"
+           Ckeck code and output results to reports/codesniffer.xml file in
            project root directory.
 
+
        Slack commands
-         slack-message "-Dslack.payload=Message"
+
+         slack-message "-Dslack.text=Message"
            Send message to Slack channel.
+
+
+       PHP Mess Detector commands
+
+         pmd "-Ds=path/to/file_or_dir"
+           Check code and output results to reports/phpmd.xml file in
+           project root directory.
+
+
+       PHP Copy/Past Detector
+
+         pcpd "-Ds=path/to/file_or_dir"
+           Check code and output results to reports/phpcpd.xml file in
+           project root directory (*.module, *.inc files will be checked).
 
 DIRS AND FILES
        project
-         Where all files of site are stored.
+         Where all site's files are stored.
 
        backup/database/dump.sql.gz
          Just as file name implies: database dump file.
