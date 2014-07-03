@@ -89,10 +89,10 @@ COMMANDS
            Use command line argument -De=live to skip css/js aggregation change.
 
          db-drop
-           Drop database for the current site.
+           Drop database for current site.
 
          db-create
-           Create database for the current site.
+           Create database for current site.
 
          db-optimize ["-Denv.db.name=table_name"]
            Optimize whole database or single table. Think of it as database
@@ -114,7 +114,7 @@ COMMANDS
            Run custom tests specified in project.tests. 
 
          jmeter-tests
-           Run Jmeter tests.
+           Run Jmeter tests from 'jmeter' directory.
 
          restore-project-files
            Restore project files.
