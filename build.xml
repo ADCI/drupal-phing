@@ -16,6 +16,7 @@
   </if>
   <property file="build/properties/repo.prop"/>
   <property file="build/properties/slack.prop"/>
+  <property file="build/properties/jmeter.prop"/>
 
   <taskdef name="drush" classpath="build" classname="DrushTask"/>
 
@@ -27,11 +28,15 @@
   <import file="build/submodules/project/build.xml" />
   <import file="build/submodules/db/build.xml" />
   <import file="build/submodules/codesniffer/build.xml" />
+  <import file="build/submodules/redis/build.xml" />
+  <import file="build/submodules/phpmd/build.xml" />
+  <import file="build/submodules/phpcpd/build.xml" />
+  <import file="build/submodules/jmeter/build.xml" />
 
   <target name="init" />
 
   <!-- Build/rebuild whole site. -->
-  <target name="build" depends="drush-make, settings-file-restore, site-install" />
+  <target name="build" depends="drush-make, settings-file-restore, drushrc-file-copy, site-install" />
 
   <target name="drush-make" depends="clear">
     <echo msg="Drupal make run" />
@@ -94,8 +99,6 @@
         <delete dir="${project.drupal.dir}"/>
       </then>
     </if>
-    <!-- TODO: someone need this? Can be removed? -->
-    <!-- <property name="project.cleaned" value="true"/> -->
   </target>
 
   <target name="switch-modules" description="Enable and disable modules">
@@ -114,12 +117,55 @@
   </target>
 
   <target name="project-up" description="Build project">
-    <phingcall target="db-restore" />
     <phingcall target="settings-file-restore" />
+    <phingcall target="drushrc-file-copy" />
+    <if>
+      <and>
+        <isset property="source" />
+        <equals arg1="${source}" arg2="production" />
+      </and>
+      <then>
+        <phingcall target="db-restore-from-production" />
+      </then>
+      <else>
+        <if>
+          <and>
+            <isset property="source" />
+            <equals arg1="${source}" arg2="local" />
+          </and>
+          <then>
+            <phingcall target="db-restore-from-local" />
+          </then>
+          <else>
+            <phingcall target="db-restore-from-stage" />
+          </else>
+        </if>
+      </else>
+    </if>
+    <phingcall target="project-environment" />
   </target>
 
-  <!-- Short alias for project-up -->
-  <target name="pup" depends="project-up" />
+  <!-- Short alias for project-up. -->
+  <target name="pu" depends="project-up" />
+
+  <!-- The same as project-up. -->
+  <target name="project-up-from-stage">
+    <phingcall target="project-up">
+      <property name="source" value="stage" />
+    </phingcall>
+  </target>
+
+  <target name="project-up-from-local">
+    <phingcall target="project-up">
+      <property name="source" value="local" />
+    </phingcall>
+  </target>
+
+  <target name="project-up-from-production">
+    <phingcall target="project-up">
+      <property name="source" value="production" />
+    </phingcall>
+  </target>
 
   <target name="help">
     <loadfile property="readme" file="README.txt" />

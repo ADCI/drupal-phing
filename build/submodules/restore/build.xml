@@ -43,15 +43,21 @@
     </copy>
   </target>
 
-  <target name="restore-project-files" depends="ensure-files-dir">
-    <phingcall target="delete-folder">
-      <property name="folder.deletable" value="${project.drupal.files.dir}" />
-    </phingcall>
-    <copy todir="${project.drupal.files.dir}">
-      <fileset dir="${env.backup.dir}/files">
-        <include name="**"/>
-      </fileset>
-    </copy>
+  <target name="restore-project-files" depends="files-backup-dir-create">
+    <exec command="wget -O ${env.backup.files.dir}/files.tar.gz ${project.production_url}/files.tar.gz" passthru="true" checkreturn="true" />
+    <if>
+      <available file="${env.backup.files.dir}/files.tar.gz" />
+      <then>
+        <!-- TODO: Separate target. -->
+        <phingcall target="delete-folder">
+          <property name="folder.deletable" value="${project.drupal.files.dir}" />
+        </phingcall>
+        <phingcall target="create-folder">
+          <property name="folder.creatable" value="${project.drupal.files.dir}" />
+        </phingcall>
+        <untar file="${env.backup.files.dir}/files.tar.gz" todir="${project.drupal.files.dir}" />
+      </then>
+    </if>
   </target>
 
   <target name="ensure-custom-dir">

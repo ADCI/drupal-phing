@@ -118,19 +118,20 @@
     </copy>
   </target>
 
-  <target name="backup-project-files" depends="backup-dir-init">
-    <phingcall target="delete-folder">
-      <property name="folder.deletable" value="${env.backup.dir}/files" />
-    </phingcall>
-    <copy todir="${env.backup.dir}/files">
-      <fileset dir="${project.drupal.files.dir}">
-        <include name="**"/>
-        <exclude name="styles/**"/>
-        <exclude name="css/**"/>
-        <exclude name="js/**"/>
-        <exclude name="backups/**"/>
-      </fileset>
-    </copy>
+  <target name="backup-project-files" depends="files-backup-dir-create">
+    <tstamp />
+    <property name="backup_name" value="files-${DSTAMP}-${TSTAMP}.tar.gz" />
+    <property name="backup_file" value="${env.backup.files.dir}/${backup_name}" />
+    <echo msg="${env.backup.files.include}" />
+    <echo msg="${env.backup.files.exclude}" />
+    <tar destfile="${backup_file}" compression="gzip">
+      <fileset dir="${project.drupal.files.dir}" includes="${env.backup.files.include}" excludes="${env.backup.files.exclude}" />
+    </tar>
+    <echo msg="Creating link from ${backup_file} to ${project.drupal.dir}/files.tar.gz" />
+    <exec command="ln -sf ${backup_file} ${project.drupal.dir}/files.tar.gz" passthru="false"/>
+<!--    <phingcall target="slack-message">
+      <property name="slack.text" value="You can download latest files archive here: ${project_url}/${backup_name} or you just can run 'phing ' on you local machine." override="true" />
+    </phingcall>-->
   </target>
 
   <target name="backup-dir-init">
@@ -153,5 +154,12 @@
       <param>--format=xml</param>
     </drush>
   </target>
+
+  <target name="files-backup-dir-create">
+    <phingcall target="create-folder">
+      <property name="folder.creatable" value="${env.backup.files.dir}" />
+    </phingcall>
+  </target>
+
 
 </project>

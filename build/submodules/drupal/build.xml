@@ -93,7 +93,7 @@
     </drush>
   </target>
 
-  <target name="settings-file-restore" depends="settings-file-delete, settings-file-copy, drushrc-file-copy" description="Restore settings files.">
+  <target name="settings-file-restore" depends="settings-file-delete, settings-file-copy" description="Configure settings.php">
     <echo msg="Configure settings.php" />
   </target>
 
@@ -127,8 +127,13 @@
   </target>
 
   <target name="drushrc-file-copy">
-    <echo msg="Copy file drushrc.php" />
-    <copy file="${env.build.files.dir}/${project.drupal.drushrc.file}" tofile="${project.drupal.settings.dir}/${project.drupal.drushrc.file}" overwrite="true" />
+    <if>
+      <available file="${env.build.files.dir}/${project.drupal.drushrc.file}" property="file_exists" />
+      <then>
+        <echo msg="Copy file drushrc.php" />
+        <copy file="${env.build.files.dir}/${project.drupal.drushrc.file}" tofile="${project.drupal.settings.dir}/${project.drupal.drushrc.file}" overwrite="true" />
+      </then>
+    </if>
   </target>
 
   <!-- TODO: what's this anyway? -->

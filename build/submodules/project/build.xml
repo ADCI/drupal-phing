@@ -28,6 +28,18 @@
     <phingcall target="features-apply" />
   </target>
 
+  <target name="insurance-test-prepare">
+    <phingcall target="modules-enable">
+      <property name="projects.installable" value="sm_testing" />
+    </phingcall>
+    <phingcall target="cc">
+      <property name="projects.drush.cache" value="drush" />
+    </phingcall>
+    <drush command="check-test-data">
+      <option name="root">${project.drupal.dir}</option>
+    </drush>
+  </target>
+
   <target name="run-custom-tests" depends="testsuite-dir-init">
     <if>
       <and>
