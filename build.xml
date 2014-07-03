@@ -1,5 +1,11 @@
 <project name="druphing" default="init">
 
+  <if>
+    <available file="build/properties/env.override.prop" property="file_exists"/>
+    <then>
+      <property file="build/properties/env.override.prop"/>
+    </then>
+  </if>
   <property file="build/properties/env.prop"/>
   <property file="build/properties/project.prop"/>
   <if>

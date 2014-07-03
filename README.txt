@@ -132,12 +132,18 @@ COMMANDS
 
 DIRS AND FILES
        project
-         Where all site's files are stored.
+         Where all files of site are stored.
 
        backup/database/dump.sql.gz
          Just as file name implies: database dump file.
 
-       build, build.xml
+       build/properties
+         Settings for server and site such as mysql settings, paths, etc.
+         You can have different settings for each server. Just create file
+         env.override.prop in build/properties and place there any
+         environment settings you wish to override for single server.
+
+       build.xml, build/submodules/*.xml
          Phing tasks.
 
        coder
