@@ -1,5 +1,15 @@
 .idea/
 nbproject/
+testsuite/
+test-results/
+project/adminer.php
+selenium-tests/.classpath
 codesniffer.txt
+codesniffer.xml
+phpmd.xml
 *.sql.gz
+*.tar.gz
 .project
+Thumbs.db
+._.DS_Store
+.DS_Store
