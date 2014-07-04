@@ -1,6 +1,7 @@
 .idea/
 nbproject/
 testsuite/
+reports/
 test-results/
 project/adminer.php
 selenium-tests/.classpath
@@ -13,4 +14,4 @@ phpmd.xml
 Thumbs.db
 ._.DS_Store
 .DS_Store
-*drushrc.php
+project/sites/*/drushrc.php
