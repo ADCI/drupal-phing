@@ -3,7 +3,6 @@
   <target name="backup" depends="dump-local, backup-custom-modules, backup-custom-themes" />
 
   <target name="dump">
-    <property name="env.backup.db.dir" value="${project.drupal.dir}" override="true" />
     <phingcall target="backup-database">
       <property name="link_backup" value="true" override="true" />
       <property name="show_message" value="true" override="true" />
@@ -12,7 +11,6 @@
 
   <!-- The same as dump. -->
   <target name="dump-production">
-    <property name="env.backup.db.dir" value="${project.drupal.dir}" override="true" />
     <phingcall target="backup-database">
       <property name="link_backup" value="true" override="true" />
       <property name="show_message" value="true" override="true" />
@@ -22,7 +20,6 @@
   </target>
 
   <target name="dump-stage">
-    <property name="env.backup.db.dir" value="${project.drupal.dir}" override="true" />
     <phingcall target="backup-database">
       <property name="link_backup" value="true" override="true" />
       <property name="show_message" value="true" override="true" />
@@ -79,7 +76,7 @@
           </then>
         </if>
         <phingcall target="slack-message">
-          <property name="slack.text" value="You can download new database dump here: ${project_url}/${backup_name}.gz or you just can run 'phing ${restore_command}' on you local machine." override="true" />
+          <property name="slack.text" value="You can download new database dump here: ${project_url}/dump.sql.gz or you just can run 'phing ${restore_command}' on you local machine." override="true" />
         </phingcall>
       </then>
     </if>
