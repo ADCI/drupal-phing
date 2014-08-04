@@ -4,6 +4,8 @@
     <phingcall target="pull" />
     <phingcall target="updatedb" />
     <phingcall target="features-apply" />
+    <phingcall target="settings-file-restore" />
+    <phingcall target="drushrc-file-copy" />
   </target>
 
   <target name="deploy-production" depends="do-deploy">
