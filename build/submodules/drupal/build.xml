@@ -112,7 +112,7 @@
 
   <target name="settings-file-copy" description="Copy settings file if it exists">
     <echo msg="Copy file settings.php" />
-    <copy file="${env.build.files.dir}/${project.drupal.settings.file}"
+    <copy file="${env.build.files.dir}/${server}.${project.drupal.settings.file}"
           tofile="${project.drupal.settings.dir}/${project.drupal.settings.file}"
           overwrite="true">
       <filterchain>

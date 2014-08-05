@@ -2,13 +2,16 @@
 
   <target name="do-deploy">
     <phingcall target="pull" />
-    <phingcall target="updatedb" />
-    <phingcall target="features-apply" />
     <phingcall target="settings-file-restore" />
     <phingcall target="drushrc-file-copy" />
+    <phingcall target="updatedb" />
+    <phingcall target="features-apply" />
   </target>
 
-  <target name="deploy-production" depends="do-deploy">
+  <target name="deploy-production">
+    <phingcall target="do-deploy">
+      <property name="server" value="production" override="true" />
+    </phingcall>
     <phingcall target="slack-message">
       <property name="slack.text" value="Deploy on ${project.production_url} has been finished." override="true" />
     </phingcall>
@@ -18,7 +21,10 @@
   <!-- The only real deploy is deploy on production server. -->
   <target name="deploy" depends="deploy-production" />
 
-  <target name="deploy-stage" depends="do-deploy">
+  <target name="deploy-stage">
+    <phingcall target="do-deploy">
+      <property name="server" value="stage" override="true" />
+    </phingcall>
     <phingcall target="slack-message">
       <property name="slack.text" value="Deploy on ${project.stage_url} has been finished." override="true" />
     </phingcall>
@@ -43,6 +49,19 @@
   </target>
 
   <target name="run-custom-tests" depends="testsuite-dir-init">
+    <if>
+      <and>
+        <not>
+          <equals arg1="${project.tests.delete_folder}" arg2="" />
+        </not>
+        <available file="${project.tests.delete_folder}" property="dir_exists" />
+      </and>
+      <then>
+        <phingcall target="delete-folder">
+          <property name="folder.deletable" value="${project.tests.delete_folder}" />
+        </phingcall>
+      </then>
+    </if>
     <if>
       <and>
         <isset property="p" />

@@ -33,6 +33,15 @@
   <import file="build/submodules/phpcpd/build.xml" />
   <import file="build/submodules/jmeter/build.xml" />
 
+  <if>
+    <not>
+      <isset property="server" />
+    </not>
+    <then>
+      <property name="server" value="${env.default.server}" />
+    </then>
+  </if>
+
   <target name="init" />
 
   <!-- Build/rebuild whole site. -->

@@ -45,14 +45,33 @@
         <not>
           <isset property="db.url" />
         </not>
-        <equals arg1="${db_url}" arg2="" />
+        <equals arg1="${db.url}" arg2="" />
       </or>
       <then>
         <property name="db.url" value="${project.stage_url}" override="true" />
       </then>
     </if>
-    <exec command="wget -O ${env.backup.db.dir}/dump.sql.gz ${db.url}/dump.sql.gz" passthru="true" checkreturn="true" />
-    <phingcall target="db-restore" />
+    <if>
+      <equals arg1="${db.url}" arg2="" />
+      <then>
+        <echo msg="URL is empty. Please check you settings." level="error" />
+      </then>
+      <else>
+        <exec command="wget -O ${env.backup.db.dir}/dump.sql.gz ${db.url}/dump.sql.gz" passthru="true" checkreturn="false" logoutput="false" returnProperty="return_code" outputProperty="return_output" />
+        <if>
+          <equals arg1="${return_code}" arg2="0" />
+          <then>
+            <echo msg="Database dump downloaded successfully." />
+            <phingcall target="db-restore" />
+          </then>
+          <else>
+            <echo msg="Cannot download database dump." level="error" />
+            <echo msg="Error:" level="error" />
+            <echo msg="${return_output}" level="error" />
+          </else>
+        </if>
+      </else>
+    </if>
   </target>
 
   <target name="db-backup-dir-create">
