@@ -151,7 +151,9 @@
         </if>
       </else>
     </if>
-    <phingcall target="project-environment" />
+    <phingcall target="project-environment">
+      <property name="e" value="${server}" />
+    </phingcall>
   </target>
 
   <!-- Short alias for project-up. -->
