@@ -1,7 +1,7 @@
 ; TODO: I'm not sure about first two parameters. Something like service_id and team_id?
-slack.id1=T025B5VP6
-slack.id2=B025B2YSH
-slack.token=42Vvd1WkAZTHO9FIF6KLU0Il
+slack.id1=
+slack.id2=
+slack.token=
 slack.url=https://hooks.slack.com/services/${slack.id1}/${slack.id2}/${slack.token}
 slack.channel=
 slack.payload={"text": "${slack.text}", "channel": "${slack.channel}"}
