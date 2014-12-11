@@ -37,3 +37,4 @@ projects.drush.cache=all
 
 ; Simpletests to run with run-custom-tests command.
 project.tests=
+project.tests.delete_folder=

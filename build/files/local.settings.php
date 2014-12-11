@@ -565,3 +565,43 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
  * Remove the leading hash signs to disable.
  */
 # $conf['allow_authorize_operations'] = FALSE;
+
+/**
+ * Redis configuration.
+ */
+/*$output = @exec('redis-cli ping');
+if ($output == 'PONG') {
+  $conf['redis_client_interface'] = 'Predis';
+  define('PREDIS_BASE_PATH', DRUPAL_ROOT . '/sites/all/libraries/predis/lib/');
+  $conf['lock_inc'] = 'sites/all/modules/contrib/redis/redis.lock.inc';
+  $conf['cache_backends'][] = 'sites/all/modules/contrib/redis/redis.autoload.inc';
+  $conf['cache_prefix']['default'] = FALSE;
+
+  // Use Redis cache for Drupal cache tables.
+  // $conf['cache_default_class'] = 'Redis_Cache';
+  $conf['cache_class_cache'] = 'Redis_Cache';
+  $conf['cache_class_cache_admin_menu'] = 'Redis_Cache';
+  $conf['cache_class_cache_block'] = 'Redis_Cache';
+  $conf['cache_class_cache_bootstrap'] = 'Redis_Cache';
+  $conf['cache_class_cache_field'] = 'Redis_Cache';
+  $conf['cache_class_cache_filter'] = 'Redis_Cache';
+  $conf['cache_class_cache_image'] = 'Redis_Cache';
+  $conf['cache_class_cache_libraries'] = 'Redis_Cache';
+  $conf['cache_class_cache_menu'] = 'Redis_Cache';
+  $conf['cache_class_cache_page'] = 'Redis_Cache';
+  $conf['cache_class_cache_path'] = 'Redis_Cache';
+  $conf['cache_class_cache_rules'] = 'Redis_Cache';
+  $conf['cache_class_cache_update'] = 'Redis_Cache';
+  $conf['cache_class_cache_views'] = 'Redis_Cache';
+  $conf['cache_class_cache_views_data'] = 'Redis_Cache';
+
+  // Form cache is too heavy to store it in memory.
+  // $conf['cache_class_cache_form'] = 'Redis_Cache';
+
+  // Use Redis cache for tables from Entity Cache module.
+  $conf['cache_class_cache_entity_node'] = 'Redis_Cache';
+  $conf['cache_class_cache_entity_user'] = 'Redis_Cache';
+  $conf['cache_class_cache_entity_taxonomy_term'] = 'Redis_Cache';
+  $conf['cache_class_cache_entity_taxonomy_vocabulary'] = 'Redis_Cache';
+  $conf['cache_class_cache_entity_file'] = 'Redis_Cache';
+}*/

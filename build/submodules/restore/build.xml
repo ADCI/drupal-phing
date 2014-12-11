@@ -56,6 +56,11 @@
           <property name="folder.creatable" value="${project.drupal.files.dir}" />
         </phingcall>
         <untar file="${env.backup.files.dir}/files.tar.gz" todir="${project.drupal.files.dir}" />
+        <chmod mode="0777" quiet="true" failonerror="false">
+          <fileset dir="${project.drupal.files.dir}">
+            <include name="**"/>
+          </fileset>
+        </chmod>
       </then>
     </if>
   </target>

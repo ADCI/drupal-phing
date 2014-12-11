@@ -1,19 +1,25 @@
 <project name="repo">
 
   <target name="pull">
+    <phingcall target="git-pull-s" />
     <phingcall target="git-pull" />
+    <phingcall target="git-submodule-update" />
   </target>
 
   <target name="push">
-    <phingcall target="commit" />
+    <phingcall target="git-push-s" />
     <phingcall target="git-push" />
   </target>
 
   <!-- Short alias for push. -->
+  <target name="s" depends="git-status" />
+  <target name="status" depends="git-status-s" />
   <target name="p" depends="push" />
 
   <target name="commit">
     <phingcall target="check-m" />
+    <phingcall target="git-add-all-s" />
+    <phingcall target="git-commit-s" />
     <phingcall target="git-add-all" />
     <phingcall target="git-commit" />
   </target>
@@ -26,6 +32,7 @@
     <phingcall target="check-m" />
     <phingcall target="pull" />
     <!-- TODO: exit if failed -->
+    <phingcall target="commit" />
     <phingcall target="push" />
   </target>
 
@@ -39,41 +46,99 @@
     <phingcall target="git-push" />
   </target>
 
+  <target name="commit-pull-push-s">
+    <phingcall target="commit" />
+    <phingcall target="git-pull-s" />
+    <phingcall target="git-pull" />
+    <!-- TODO: exit if failed -->
+    <phingcall target="git-push-s" />
+    <phingcall target="git-push" />
+  </target>
+
   <!-- Short alias for commit-pull-push. -->
   <target name="cpp" depends="commit-pull-push" />
+  <target name="cpps" depends="commit-pull-push-s" />
 
   <!-- Short alias for commit-pull-push. Easier to remeber then cpp. -->
   <target name="ppc" depends="commit-pull-push" />
+  <target name="ppcs" depends="commit-pull-push-s" />
 
   <target name="git-add-all">
+    <property name="git.directory" value="${env.project.dir}" />
+    <echo msg="${git.directory}" />
     <echo msg="Git add all files" />
-    <exec command="git add -A ${env.project.dir}" passthru="true" />
+    <exec command="git add -A" dir="${git.directory}" passthru="true" />
+  </target>
+
+  <target name="git-status" >
+    <echo msg="Git status" />
+    <property name="git.directory" value="${env.project.dir}" />
+    <exec command="git status" dir="${git.directory}" passthru="true" />
+  </target>
+
+  <target name="git-status-s" >
+    <phingcall target="git-status">
+      <property name="git.directory" value="${repo.submodules.modules.dir}" />
+    </phingcall>
+  </target>
+
+  <target name="git-add-all-s">
+    <phingcall target="git-add-all">
+      <property name="git.directory" value="${repo.submodules.modules.dir}" override="true" />
+    </phingcall>
   </target>
 
   <target name="git-commit">
     <phingcall target="check-m" />
     <!-- <phingcall target="sniff-commit" /> -->
     <echo msg="Git commit" />
-    <exec command="git commit -m '${m}'" passthru="true" />
+    <property name="git.directory" value="${env.project.dir}" />
+    <exec command="git commit -m '${m}'" dir="${git.directory}" passthru="true" />
+  </target>
+
+  <target name="git-commit-s">
+    <phingcall target="git-commit">
+      <property name="git.directory" value="${repo.submodules.modules.dir}" override="true" />
+    </phingcall>
   </target>
 
   <target name="git-push">
     <echo msg="Git push" />
+    <property name="git.directory" value="${env.project.dir}" />
+    <property name="git.branch" value="${repo.branch}" />
     <gitpush
-      repository="${env.project.dir}"
-      refspec="${repo.branch}"
+      repository="${git.directory}"
+      refspec="${git.branch}"
       quiet="false"
-      />
+    />
+  </target>
+
+  <target name="git-push-s">
+    <phingcall target="git-push">
+      <property name="git.directory" value="${repo.submodules.modules.dir}" override="true" />
+      <property name="git.branch" value="${repo.submodules.modules.branch}" override="true" />
+    </phingcall>
   </target>
 
   <target name="git-pull">
     <echo msg="Git pull" />
+    <property name="git.directory" value="${env.project.dir}" />
+    <property name="git.branch" value="${repo.branch}" />
+    <echo msg="${git.directory}" />
+    <echo msg="${git.branch}" />
     <gitpull
-      repository="${env.project.dir}"
+      repository="${git.directory}"
       source="origin"
-      refspec="${repo.branch}"
+      refspec="${git.branch}"
       quiet="false"
-      />
+    />
+  </target>
+
+  <target name="git-pull-s">
+    <phingcall target="git-pull">
+      <property name="git.directory" value="${repo.submodules.modules.dir}" override="true" />
+      <property name="git.branch" value="${repo.submodules.modules.branch}" override="true" />
+    </phingcall>
   </target>
 
   <target name="git-fetch">
@@ -83,6 +148,20 @@
       all="true"
       quiet="false"
       />
+  </target>
+
+  <target name="git-checkout">
+    <echo msg="Git checkout" />
+    <property name="git.directory" value="${env.project.dir}" />
+    <property name="git.branch" value="${repo.branch}" />
+    <exec command="git checkout ${git.branch}" dir="${git.directory}" passthru="true" />
+  </target>
+
+  <target name="git-checkout-s">
+    <phingcall target="git-checkout">
+      <property name="git.directory" value="${repo.submodules.modules.dir}" override="true" />
+      <property name="git.branch" value="${repo.submodules.modules.branch}" override="true" />
+    </phingcall>
   </target>
 
   <target name="check-m">
@@ -111,6 +190,12 @@
     <phingcall target="git-fetch" />
     <phingcall target="git-cherry-pick" />
     <phingcall target="git-push" />
+  </target>
+
+  <target name="git-submodule-update">
+    <echo msg="Submodule update" />
+    <exec command="git submodule update --init" />
+    <phingcall target="git-checkout-s" />
   </target>
 
   <target name="check-c">

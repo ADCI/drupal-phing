@@ -3,29 +3,40 @@
   <target name="db-create">
     <echo msg="Create project database" />
     <pdo url="${env.db.driver}:host=${env.db.host}" userId="${env.db.user.sudo}" password="${env.db.user.sudo.password}" onerror="abort">
-      CREATE DATABASE ${env.db.name};
+      CREATE DATABASE `${env.db.name}`;
     </pdo>
   </target>
 
   <target name="db-drop">
     <echo msg="Drop project database" />
     <pdo url="${env.db.driver}:host=${env.db.host}" userId="${env.db.user.sudo}" password="${env.db.user.sudo.password}" onerror="abort">
-      DROP DATABASE IF EXISTS ${env.db.name};
+      DROP DATABASE IF EXISTS `${env.db.name}`;
     </pdo>
   </target>
 
   <target name="db-restore">
     <if>
-      <available file="${env.backup.db.dir}/dump.sql.gz" />
+      <or>
+        <not>
+          <isset property="db.path_to_dump" />
+        </not>
+        <equals arg1="${db.path_to_dump}" arg2="" />
+      </or>
+      <then>
+        <property name="db.path_to_dump" value="${env.backup.db.dir}/${env.backup.db.local_filename}" override="true" />
+      </then>
+    </if>
+    <if>
+      <available file="${db.path_to_dump}" />
       <then>
         <phingcall target="db-drop" />
         <phingcall target="db-create" />
         <phingcall target="redis-flush" />
-        <echo msg="Restore project database" />
-        <exec command="gunzip &lt; ${env.backup.db.dir}/dump.sql.gz | mysql -h ${env.db.host} -u${env.db.user} -p${env.db.password} ${env.db.name}" logoutput="true" checkreturn="true" passthru="true" />
+        <echo msg="Restore project database from file ${db.path_to_dump}" />
+        <exec command="gunzip &lt; ${db.path_to_dump} | mysql -h ${env.db.host} -u${env.db.user} -p${env.db.password} '${env.db.name}'" logoutput="true" checkreturn="true" passthru="true" />
       </then>
       <else>
-        <echo msg="Dump file ${env.backup.db.dir}/dump.sql.gz does not exists or inaccessible." />
+        <echo msg="Dump file ${db.path_to_dump} does not exists or inaccessible." />
       </else>
     </if>
   </target>
@@ -39,7 +50,7 @@
   <target name="dbrl" depends="db-restore-from-local" />
 
   <target name="db-restore-url" depends="db-backup-dir-create">
-    <echo msg="Get database dump from production site." />
+    <echo msg="Get database dump from remote server." />
     <if>
       <or>
         <not>
@@ -48,7 +59,19 @@
         <equals arg1="${db.url}" arg2="" />
       </or>
       <then>
-        <property name="db.url" value="${project.stage_url}" override="true" />
+        <property name="db.url" value="${project.stage_url}${env.backup.db.stage_uri}${env.backup.db.stage_filename}" override="true" />
+      </then>
+    </if>
+    <!-- TODO: It isn't too good to have duplicate code. But only thing we could do is to place this if somewhere at the beginning of build.xml and that's not too good either. -->
+    <if>
+      <or>
+        <not>
+          <isset property="db.path_to_dump" />
+        </not>
+        <equals arg1="${db.path_to_dump}" arg2="" />
+      </or>
+      <then>
+        <property name="db.path_to_dump" value="${env.backup.db.dir}/${env.backup.db.local_filename}" override="true" />
       </then>
     </if>
     <if>
@@ -57,7 +80,7 @@
         <echo msg="URL is empty. Please check you settings." level="error" />
       </then>
       <else>
-        <exec command="wget -O ${env.backup.db.dir}/dump.sql.gz ${db.url}/dump.sql.gz" passthru="true" checkreturn="false" logoutput="false" returnProperty="return_code" outputProperty="return_output" />
+        <exec command="wget -O ${db.path_to_dump} ${db.url}" passthru="true" checkreturn="false" logoutput="false" returnProperty="return_code" outputProperty="return_output" />
         <if>
           <equals arg1="${return_code}" arg2="0" />
           <then>
@@ -85,7 +108,7 @@
 
   <target name="db-restore-from-stage">
     <phingcall target="db-restore-url">
-      <property name="db.url" value="${project.stage_url}" override="true" />
+      <property name="db.url" value="${project.stage_url}${env.backup.db.stage_uri}${env.backup.db.stage_filename}" override="true" />
     </phingcall>
   </target>
 
@@ -94,7 +117,7 @@
 
   <target name="db-restore-from-production">
     <phingcall target="db-restore-url">
-      <property name="db.url" value="${project.production_url}" override="true" />
+      <property name="db.url" value="${project.production_url}${env.backup.db.production_uri}${env.backup.db.production_filename}" override="true" />
     </phingcall>
   </target>
 

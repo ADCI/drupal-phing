@@ -1,4 +1,4 @@
-<project name="druphing" default="init">
+<project name="druphing" default="h">
 
   <if>
     <available file="build/properties/env.override.prop" property="file_exists"/>
@@ -18,7 +18,7 @@
   <property file="build/properties/slack.prop"/>
   <property file="build/properties/jmeter.prop"/>
 
-  <taskdef name="drush" classpath="build" classname="DrushTask"/>
+  <taskdef name="drush" classpath="build/phingdrushtask" classname="DrushTask"/>
 
   <import file="build/submodules/slack/build.xml" />
   <import file="build/submodules/drupal/build.xml" />
@@ -41,8 +41,6 @@
       <property name="server" value="${env.default.server}" />
     </then>
   </if>
-
-  <target name="init" />
 
   <!-- Build/rebuild whole site. -->
   <target name="build" depends="drush-make, settings-file-restore, drushrc-file-copy, site-install" />
@@ -128,6 +126,7 @@
   <target name="project-up" description="Build project">
     <phingcall target="settings-file-restore" />
     <phingcall target="drushrc-file-copy" />
+    <phingcall target="git-submodule-update" />
     <if>
       <and>
         <isset property="source" />
@@ -151,9 +150,8 @@
         </if>
       </else>
     </if>
-    <phingcall target="project-environment">
-      <property name="e" value="${server}" />
-    </phingcall>
+    <phingcall target="project-environment" />
+    <phingcall target="git-submodule-update" />
   </target>
 
   <!-- Short alias for project-up. -->

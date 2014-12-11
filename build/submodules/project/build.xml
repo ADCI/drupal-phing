@@ -9,6 +9,7 @@
   </target>
 
   <target name="deploy-production">
+    <phingcall target="dump-production" />
     <phingcall target="do-deploy">
       <property name="server" value="production" override="true" />
     </phingcall>

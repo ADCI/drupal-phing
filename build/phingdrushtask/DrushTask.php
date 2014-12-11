@@ -33,6 +33,10 @@ class DrushOption {
     return $this->name;
   }
 
+  public function setValue($str) {
+    $this->value = $str;
+  }
+
   public function addText($str) {
     $this->value = $str;
   }
@@ -70,6 +74,8 @@ class DrushTask extends Task {
   private $return_glue = "\n";
   private $return_property = NULL;
   private $verbose = FALSE;
+  private $haltonerror = TRUE;
+  private $alias = NULL;
 
   /**
    * The Drush command to run.
@@ -149,6 +155,18 @@ class DrushTask extends Task {
   }
 
   /**
+   * Should the task fail on Drush error (non zero exit code)
+   */
+  public function setHaltonerror($var) {
+    if (is_string($var)) {
+      $var = strtolower($var);
+      $this->haltonerror = ($var === 'yes' || $var === 'true');
+    } else {
+      $this->haltonerror = !!$var;
+    }
+  }
+
+  /**  
    * Parameters for the Drush command.
    */
   public function createParam() {
@@ -178,6 +196,17 @@ class DrushTask extends Task {
   }
 
   /**
+   * Site alias.
+   */
+  public function setAlias($var) {
+    if (is_string($var)) {
+      $this->alias = $var;
+    } else {
+      $this->alias = NULL;
+    }
+  }
+
+  /**
    * Initialize the task.
    */
   public function init() {
@@ -194,6 +223,10 @@ class DrushTask extends Task {
     $command = array();
 
     $command[] = !empty($this->bin) ? $this->bin : 'drush';
+
+    if (!empty($this->alias)) {
+      $command[] = $this->alias;
+    }
 
     $option = new DrushOption();
     $option->setName('nocolor');
@@ -262,7 +295,7 @@ class DrushTask extends Task {
       $this->getProject()->setProperty($this->return_property, implode($this->return_glue, $output));
     }
     // Build fail.
-    if ($return != 0) {
+    if ($this->haltonerror && $return != 0) {
       throw new BuildException("Drush exited with code $return");
     }
     return $return != 0;

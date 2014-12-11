@@ -2,6 +2,9 @@
 
   <target name="jmeter-tests">
     <echo msg="Run Jmeter tests." />
+    <phingcall target="delete-folder">
+      <property name="folder.deletable" value="${jmeter.logs_dir}" />
+    </phingcall>
     <foreach param="jmeter.test" target="run-jmeter-test">
       <fileset dir="${jmeter.tests_dir}">
         <include name="*.jmx"/>
@@ -21,6 +24,7 @@
         <delete file="${jmetr.log}" quiet="true" />
       </then>
     </if>
+    <echo msg="Run test now." />
     <exec command="jmeter -J jmeter.save.saveservice.output_format=${jmeter.output_format} -j ${jmeter.logs_dir}/jmeter.log -n -t ${jmeter.tests_dir}/${jmeter.test} -l ${jmetr.log} " logoutput="false" checkreturn="true" passthru="false" />
   </target>
 

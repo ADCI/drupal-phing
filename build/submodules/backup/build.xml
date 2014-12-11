@@ -3,6 +3,9 @@
   <target name="backup" depends="dump-local, backup-custom-modules, backup-custom-themes" />
 
   <target name="dump">
+    <!-- TODO: This magic command should be reworked or even removed. -->
+    <!-- With current settings it works just like dump-stage but I believe we use it on production. -->
+    <!-- Will be changed when whole stage-production-local issue overhauled. -->
     <phingcall target="backup-database">
       <property name="link_backup" value="true" override="true" />
       <property name="show_message" value="true" override="true" />
@@ -16,6 +19,8 @@
       <property name="show_message" value="true" override="true" />
       <property name="project_url" value="${project.production_url}"  override="true" />
       <property name="restore_command" value="dbrp" override="true" />
+      <property name="dump_uri" value="${env.backup.db.production_uri}" override="true" />
+      <property name="dump_filename" value="${env.backup.db.production_filename}" override="true" />
     </phingcall>
   </target>
 
@@ -25,12 +30,18 @@
       <property name="show_message" value="true" override="true" />
       <property name="project_url" value="${project.stage_url}" override="true" />
       <property name="restore_command" value="dbu (or dbrs)" override="true" />
+      <property name="dump_uri" value="${env.backup.db.production_uri}" override="true" />
+      <property name="dump_filename" value="${env.backup.db.stage_filename}" override="true" />
     </phingcall>
   </target>
 
   <target name="dump-local" depends="backup-dir-init">
-    <property name="env.backup.db.dir" value="${project.drupal.dir}" override="true" />
-    <phingcall target="backup-database" />
+    <!-- <property name="env.backup.db.dir" value="${project.drupal.dir}" override="true" /> -->
+    <phingcall target="backup-database">
+      <property name="link_backup" value="true" override="true" />
+      <property name="dump_uri" value="${env.backup.db.local_uri}" override="true" />
+      <property name="dump_filename" value="${env.backup.db.local_filename}" override="true" />
+    </phingcall>
   </target>
 
   <target name="backup-database">
@@ -45,9 +56,34 @@
       <option name="structure-tables-key">common</option>
     </drush>
     <if>
+      <or>
+        <not>
+          <isset property="dump_uri" />
+        </not>
+        <equals arg1="${dump_uri}" arg2="" />
+      </or>
+      <then>
+        <property name="dump_uri" value="${env.backup.db.stage_uri}" override="true" />
+      </then>
+    </if>
+    <if>
+      <or>
+        <not>
+          <isset property="dump_filename" />
+        </not>
+        <equals arg1="${dump_filename}" arg2="" />
+      </or>
+      <then>
+        <property name="dump_filename" value="${env.backup.db.stage_filename}" override="true" />
+      </then>
+    </if>
+    <property name="dump_full_uri" value="${dump_uri}${dump_filename}" />
+    <if>
       <equals arg1="${link_backup}" arg2="1" />
       <then>
-        <exec command="ln -sf ${env.backup.db.dir}/${backup_name}.gz ${project.drupal.dir}/dump.sql.gz" passthru="false" />
+        <exec command="ln -sf ${env.backup.db.dir}/${backup_name}.gz ${project.drupal.dir}${dump_full_uri}" passthru="false" />
+        <exec command="ln -sf ${env.backup.db.dir}/${backup_name}.gz ${env.backup.db.dir}/${dump_filename}" passthru="false" />
+        <echo msg="Symbolic link to latest database dump has been created: ${project.drupal.dir}${dump_full_uri}" />
       </then>
     </if>
     <if>
@@ -76,7 +112,7 @@
           </then>
         </if>
         <phingcall target="slack-message">
-          <property name="slack.text" value="You can download new database dump here: ${project_url}/dump.sql.gz or you just can run 'phing ${restore_command}' on you local machine." override="true" />
+          <property name="slack.text" value="You can download new database dump here: ${project_url}${dump_full_uri} or you just can run 'phing ${restore_command}' on you local machine." override="true" />
         </phingcall>
       </then>
     </if>
