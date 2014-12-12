@@ -1,7 +1,5 @@
-; TODO: I'm not sure about first two parameters. Something like service_id and team_id?
-slack.id1=
-slack.id2=
-slack.token=
-slack.url=https://hooks.slack.com/services/${slack.id1}/${slack.id2}/${slack.token}
+; Url comes from Slack Incoming WebHooks configuration.
+slack.enabled=false
+slack.url=https://hooks.slack.com/services/
 slack.channel=
 slack.payload={"text": "${slack.text}", "channel": "${slack.channel}"}

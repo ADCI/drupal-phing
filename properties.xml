@@ -1,0 +1,108 @@
+<project name="properties">
+  <!--
+    Override order (from less important to most important):
+      1. All properties from phing base directory in 
+         "build/properties/[group].prop" files. These are defaults. Please
+         don't ever change defaults. Use .override.prop files if you want
+         to make any changes.
+      2. All properties from phing base directory in
+         "build/properties/[group].override.prop" files.
+      3. All properties from project root directory in
+         "build/properties/[group].prop" files.
+      4. All properties from project root directory in
+         "build/properties/[group].override.prop" files.
+
+    So properties in phing base directory will be overridden by properties in
+    all other locations.
+  -->
+
+  <!--
+    We could not use foreach to include prop files here because phingcalling 
+    target outside any target will cause Phing to go into infinite loop. So
+    a lot of repetitive code here.
+  -->
+
+  <!-- druphing -->
+  <if>
+    <not>
+      <equals arg1="${druphing.base_path}" arg2="" />
+    </not>
+    <then>
+      <!-- This must not override variables from phing_prop directory if any exists so no override="true". -->
+      <if><available file="${druphing.base_path}build/properties/druphing.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/druphing.prop" /></then></if>
+    </then>
+  </if>
+
+  <!-- env -->
+  <if>
+    <not>
+      <equals arg1="${druphing.base_path}" arg2="" />
+    </not>
+    <then>
+      <if><available file="${druphing.base_path}build/properties/env.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/env.prop" /></then></if>
+      <if><available file="${druphing.base_path}build/properties/env.override.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/env.override.prop" override="true" /></then></if>
+    </then>
+  </if>
+  <if><available file="phing_prop/properties/env.prop" property="file_exists" /><then><property file="phing_prop/properties/env.prop" override="true" /></then></if>
+  <if><available file="phing_prop/properties/env.override.prop" property="file_exists" /><then><property file="phing_prop/properties/env.override.prop" override="true" /></then></if>
+
+  <!-- project -->
+  <if>
+    <not>
+      <equals arg1="${druphing.base_path}" arg2="" />
+    </not>
+    <then>
+      <if><available file="${druphing.base_path}build/properties/project.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/project.prop" /></then></if>
+      <if><available file="${druphing.base_path}build/properties/project.override.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/project.override.prop" override="true" /></then></if>
+    </then>
+  </if>
+  <if><available file="phing_prop/properties/project.prop" property="file_exists" /><then><property file="phing_prop/properties/project.prop" override="true" /></then></if>
+  <if><available file="phing_prop/properties/project.override.prop" property="file_exists" /><then><property file="phing_prop/properties/project.override.prop" override="true" /></then></if>
+
+  <!-- repo -->
+  <if>
+    <not>
+      <equals arg1="${druphing.base_path}" arg2="" />
+    </not>
+    <then>
+      <if><available file="${druphing.base_path}build/properties/repo.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/repo.prop" /></then></if>
+      <if><available file="${druphing.base_path}build/properties/repo.override.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/repo.override.prop" override="true" /></then></if>
+    </then>
+  </if>
+  <if><available file="phing_prop/properties/repo.prop" property="file_exists" /><then><property file="phing_prop/properties/repo.prop" override="true" /></then></if>
+  <if><available file="phing_prop/properties/repo.override.prop" property="file_exists" /><then><property file="phing_prop/properties/repo.override.prop" override="true" /></then></if>
+
+  <!-- jmeter -->
+  <if>
+    <not>
+      <equals arg1="${druphing.base_path}" arg2="" />
+    </not>
+    <then>
+      <if><available file="${druphing.base_path}build/properties/jmeter.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/jmeter.prop" /></then></if>
+      <if><available file="${druphing.base_path}build/properties/jmeter.override.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/jmeter.override.prop" override="true" /></then></if>
+    </then>
+  </if>
+  <if><available file="phing_prop/properties/jmeter.prop" property="file_exists" /><then><property file="phing_prop/properties/jmeter.prop" override="true" /></then></if>
+  <if><available file="phing_prop/properties/jmeter.override.prop" property="file_exists" /><then><property file="phing_prop/properties/jmeter.override.prop" override="true" /></then></if>
+
+  <!-- slack -->
+  <if>
+    <not>
+      <equals arg1="${druphing.base_path}" arg2="" />
+    </not>
+    <then>
+      <if><available file="${druphing.base_path}build/properties/slack.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/slack.prop" /></then></if>
+      <if><available file="${druphing.base_path}build/properties/slack.override.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/slack.override.prop" override="true" /></then></if>
+    </then>
+  </if>
+  <if><available file="phing_prop/properties/slack.prop" property="file_exists" /><then><property file="phing_prop/properties/slack.prop" override="true" /></then></if>
+  <if><available file="phing_prop/properties/slack.override.prop" property="file_exists" /><then><property file="phing_prop/properties/slack.override.prop" override="true" /></then></if>
+
+  <if>
+    <available file="${project.make.prop}" property="file_exists" />
+    <then>
+      <property file="${project.make.prop}" />
+    </then>
+  </if>
+
+</project>

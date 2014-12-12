@@ -1,37 +1,22 @@
 <project name="druphing" default="h">
+  <property name="druphing.loaded" value="true" />
 
-  <if>
-    <available file="build/properties/env.override.prop" property="file_exists"/>
-    <then>
-      <property file="build/properties/env.override.prop"/>
-    </then>
-  </if>
-  <property file="build/properties/env.prop"/>
-  <property file="build/properties/project.prop"/>
-  <if>
-    <available file="${project.make.prop}" property="file_exists"/>
-    <then>
-      <property file="${project.make.prop}"/>
-    </then>
-  </if>
-  <property file="build/properties/repo.prop"/>
-  <property file="build/properties/slack.prop"/>
-  <property file="build/properties/jmeter.prop"/>
+  <taskdef name="drush" classpath="${druphing.base_path}build/phingdrushtask" classname="DrushTask"/>
 
-  <taskdef name="drush" classpath="build/phingdrushtask" classname="DrushTask"/>
+  <import file="${druphing.base_path}properties.xml" />
 
-  <import file="build/submodules/slack/build.xml" />
-  <import file="build/submodules/drupal/build.xml" />
-  <import file="build/submodules/repo/build.xml" />
-  <import file="build/submodules/backup/build.xml" />
-  <import file="build/submodules/restore/build.xml" />
-  <import file="build/submodules/project/build.xml" />
-  <import file="build/submodules/db/build.xml" />
-  <import file="build/submodules/codesniffer/build.xml" />
-  <import file="build/submodules/redis/build.xml" />
-  <import file="build/submodules/phpmd/build.xml" />
-  <import file="build/submodules/phpcpd/build.xml" />
-  <import file="build/submodules/jmeter/build.xml" />
+  <import file="${druphing.base_path}build/submodules/slack/build.xml" />
+  <import file="${druphing.base_path}build/submodules/drupal/build.xml" />
+  <import file="${druphing.base_path}build/submodules/repo/build.xml" />
+  <import file="${druphing.base_path}build/submodules/backup/build.xml" />
+  <import file="${druphing.base_path}build/submodules/restore/build.xml" />
+  <import file="${druphing.base_path}build/submodules/project/build.xml" />
+  <import file="${druphing.base_path}build/submodules/db/build.xml" />
+  <import file="${druphing.base_path}build/submodules/codesniffer/build.xml" />
+  <import file="${druphing.base_path}build/submodules/redis/build.xml" />
+  <import file="${druphing.base_path}build/submodules/phpmd/build.xml" />
+  <import file="${druphing.base_path}build/submodules/phpcpd/build.xml" />
+  <import file="${druphing.base_path}build/submodules/jmeter/build.xml" />
 
   <if>
     <not>

@@ -1,6 +1,8 @@
-; Project specific settings.
+; Project related settings.
+; Urls of stage and production server. These are used to download backups.
 project.production_url=http://site.com
 project.stage_url=http://stage.com
+
 ; Name of make file to use.
 project.make.name=standart
 project.make.file=build/make/${project.make.name}/build.make
