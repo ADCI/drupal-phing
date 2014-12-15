@@ -1,9 +1,11 @@
 <project name="druphing" default="h">
   <property name="druphing.loaded" value="true" />
-
-  <taskdef name="drush" classpath="${druphing.base_path}build/phingdrushtask" classname="DrushTask"/>
+  <!-- For standalone Drupal Phing it should be current directory. -->
+  <property name="druphing.base_path" value="" />
 
   <import file="${druphing.base_path}properties.xml" />
+
+  <taskdef name="drush" classpath="${druphing.base_path}build/phingdrushtask" classname="DrushTask"/>
 
   <import file="${druphing.base_path}build/submodules/slack/build.xml" />
   <import file="${druphing.base_path}build/submodules/drupal/build.xml" />

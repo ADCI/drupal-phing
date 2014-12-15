@@ -23,15 +23,11 @@
   -->
 
   <!-- druphing -->
-  <if>
-    <not>
-      <equals arg1="${druphing.base_path}" arg2="" />
-    </not>
-    <then>
-      <!-- This must not override variables from phing_prop directory if any exists so no override="true". -->
-      <if><available file="${druphing.base_path}build/properties/druphing.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/druphing.prop" /></then></if>
-    </then>
-  </if>
+  <!-- This must not override variables from ${druphing.build_dir.name} directory if any exists so no override="true". -->
+  <if><available file="${druphing.base_path}build/properties/druphing.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/druphing.prop" /></then></if>
+  <!-- Defaults for standalone Drupal Phing. -->
+  <if><available file="${druphing.build_dir.name}properties/druphing.prop" property="file_exists" /><then><property file="${druphing.build_dir.name}properties/druphing.prop" /></then></if>
+
 
   <!-- env -->
   <if>
@@ -43,8 +39,8 @@
       <if><available file="${druphing.base_path}build/properties/env.override.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/env.override.prop" override="true" /></then></if>
     </then>
   </if>
-  <if><available file="phing_prop/properties/env.prop" property="file_exists" /><then><property file="phing_prop/properties/env.prop" override="true" /></then></if>
-  <if><available file="phing_prop/properties/env.override.prop" property="file_exists" /><then><property file="phing_prop/properties/env.override.prop" override="true" /></then></if>
+  <if><available file="${druphing.build_dir.name}properties/env.prop" property="file_exists" /><then><property file="${druphing.build_dir.name}properties/env.prop" override="true" /></then></if>
+  <if><available file="${druphing.build_dir.name}properties/env.override.prop" property="file_exists" /><then><property file="${druphing.build_dir.name}properties/env.override.prop" override="true" /></then></if>
 
   <!-- project -->
   <if>
@@ -56,8 +52,8 @@
       <if><available file="${druphing.base_path}build/properties/project.override.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/project.override.prop" override="true" /></then></if>
     </then>
   </if>
-  <if><available file="phing_prop/properties/project.prop" property="file_exists" /><then><property file="phing_prop/properties/project.prop" override="true" /></then></if>
-  <if><available file="phing_prop/properties/project.override.prop" property="file_exists" /><then><property file="phing_prop/properties/project.override.prop" override="true" /></then></if>
+  <if><available file="${druphing.build_dir.name}properties/project.prop" property="file_exists" /><then><property file="${druphing.build_dir.name}properties/project.prop" override="true" /></then></if>
+  <if><available file="${druphing.build_dir.name}properties/project.override.prop" property="file_exists" /><then><property file="${druphing.build_dir.name}properties/project.override.prop" override="true" /></then></if>
 
   <!-- repo -->
   <if>
@@ -69,8 +65,8 @@
       <if><available file="${druphing.base_path}build/properties/repo.override.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/repo.override.prop" override="true" /></then></if>
     </then>
   </if>
-  <if><available file="phing_prop/properties/repo.prop" property="file_exists" /><then><property file="phing_prop/properties/repo.prop" override="true" /></then></if>
-  <if><available file="phing_prop/properties/repo.override.prop" property="file_exists" /><then><property file="phing_prop/properties/repo.override.prop" override="true" /></then></if>
+  <if><available file="${druphing.build_dir.name}properties/repo.prop" property="file_exists" /><then><property file="${druphing.build_dir.name}properties/repo.prop" override="true" /></then></if>
+  <if><available file="${druphing.build_dir.name}properties/repo.override.prop" property="file_exists" /><then><property file="${druphing.build_dir.name}properties/repo.override.prop" override="true" /></then></if>
 
   <!-- jmeter -->
   <if>
@@ -82,8 +78,8 @@
       <if><available file="${druphing.base_path}build/properties/jmeter.override.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/jmeter.override.prop" override="true" /></then></if>
     </then>
   </if>
-  <if><available file="phing_prop/properties/jmeter.prop" property="file_exists" /><then><property file="phing_prop/properties/jmeter.prop" override="true" /></then></if>
-  <if><available file="phing_prop/properties/jmeter.override.prop" property="file_exists" /><then><property file="phing_prop/properties/jmeter.override.prop" override="true" /></then></if>
+  <if><available file="${druphing.build_dir.name}properties/jmeter.prop" property="file_exists" /><then><property file="${druphing.build_dir.name}properties/jmeter.prop" override="true" /></then></if>
+  <if><available file="${druphing.build_dir.name}properties/jmeter.override.prop" property="file_exists" /><then><property file="${druphing.build_dir.name}properties/jmeter.override.prop" override="true" /></then></if>
 
   <!-- slack -->
   <if>
@@ -95,8 +91,8 @@
       <if><available file="${druphing.base_path}build/properties/slack.override.prop" property="file_exists" /><then><property file="${druphing.base_path}build/properties/slack.override.prop" override="true" /></then></if>
     </then>
   </if>
-  <if><available file="phing_prop/properties/slack.prop" property="file_exists" /><then><property file="phing_prop/properties/slack.prop" override="true" /></then></if>
-  <if><available file="phing_prop/properties/slack.override.prop" property="file_exists" /><then><property file="phing_prop/properties/slack.override.prop" override="true" /></then></if>
+  <if><available file="${druphing.build_dir.name}properties/slack.prop" property="file_exists" /><then><property file="${druphing.build_dir.name}properties/slack.prop" override="true" /></then></if>
+  <if><available file="${druphing.build_dir.name}properties/slack.override.prop" property="file_exists" /><then><property file="${druphing.build_dir.name}properties/slack.override.prop" override="true" /></then></if>
 
   <if>
     <available file="${project.make.prop}" property="file_exists" />
