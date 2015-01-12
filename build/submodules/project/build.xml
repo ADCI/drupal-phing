@@ -16,7 +16,6 @@
     <phingcall target="slack-message">
       <property name="slack.text" value="Deploy on ${project.production_url} has been finished." override="true" />
     </phingcall>
-    <phingcall target="dump-production" />
   </target>
 
   <!-- The only real deploy is deploy on production server. -->
