@@ -114,10 +114,20 @@
   </target>
 
   <target name="git-push-s">
-    <phingcall target="git-push">
-      <property name="git.directory" value="${repo.submodules.modules.dir}" override="true" />
-      <property name="git.branch" value="${repo.submodules.modules.branch}" override="true" />
-    </phingcall>
+    <if>
+      <and>
+        <isset property="repo.submodules.modules.repo" />
+        <not>
+          <equals arg1="${repo.submodules.modules.repo}" arg2="" />
+        </not>
+      </and>
+      <then>
+        <phingcall target="git-push">
+          <property name="git.directory" value="${repo.submodules.modules.dir}" override="true" />
+          <property name="git.branch" value="${repo.submodules.modules.branch}" override="true" />
+        </phingcall>
+      </then>
+    </if>    
   </target>
 
   <target name="git-pull">
@@ -135,10 +145,20 @@
   </target>
 
   <target name="git-pull-s">
-    <phingcall target="git-pull">
-      <property name="git.directory" value="${repo.submodules.modules.dir}" override="true" />
-      <property name="git.branch" value="${repo.submodules.modules.branch}" override="true" />
-    </phingcall>
+    <if>
+      <and>
+        <isset property="repo.submodules.modules.repo" />
+        <not>
+          <equals arg1="${repo.submodules.modules.repo}" arg2="" />
+        </not>
+      </and>
+      <then>
+        <phingcall target="git-pull">
+          <property name="git.directory" value="${repo.submodules.modules.dir}" override="true" />
+          <property name="git.branch" value="${repo.submodules.modules.branch}" override="true" />
+        </phingcall>
+      </then>  
+    </if>
   </target>
 
   <target name="git-fetch">
