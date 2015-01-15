@@ -29,6 +29,15 @@
     </then>
   </if>
 
+  <if>
+    <not>
+      <isset property="source" />
+    </not>
+    <then>
+      <property name="source" value="${env.default.source}" />
+    </then>
+  </if>
+
   <!-- Build/rebuild whole site. -->
   <target name="build" depends="drush-make, restore-settings-file, drushrc-file-copy, site-install" />
 
