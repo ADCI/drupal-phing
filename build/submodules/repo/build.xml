@@ -213,9 +213,19 @@
   </target>
 
   <target name="git-submodule-update">
-    <echo msg="Submodule update" />
-    <exec command="git submodule update --init" />
-    <phingcall target="git-checkout-s" />
+    <if>
+      <and>
+        <isset property="repo.submodules.modules.dir" />
+        <not>
+          <equals arg1="${repo.submodules.modules.dir}" arg2="" />
+        </not>
+      </and>
+      <then>
+        <echo msg="Submodule update" />
+        <exec command="git submodule update --init ${repo.submodules.modules.dir}" />
+        <phingcall target="git-checkout-s" />
+      </then>
+    </if>
   </target>
 
   <target name="check-c">

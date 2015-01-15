@@ -97,9 +97,9 @@
     <!-- TODO: At present after deploy on stage file settings.php somehow changes owner.
          All further deploys will fail because of this. So for now we shouldn't interrupt
          deploy script if we failed to copy settings.php. -->
+    <echo msg="Configure settings.php" />
     <phingcall target="delete-settings-file" />
     <phingcall target="copy-settings-file" />
-    <echo msg="Configure settings.php" />
   </target>
 
   <!-- Short alias for restore-settings-file -->
