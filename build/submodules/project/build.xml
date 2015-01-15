@@ -2,7 +2,7 @@
 
   <target name="do-deploy">
     <phingcall target="pull" />
-    <phingcall target="settings-file-restore" />
+    <phingcall target="restore-settings-file" />
     <phingcall target="drushrc-file-copy" />
     <phingcall target="updatedb" />
     <phingcall target="features-apply" />

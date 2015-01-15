@@ -104,7 +104,7 @@ COMMANDS
          cc
            Clear all Drupal cache.
 
-         settings-file-restore (settings)
+         restore-settings-file (settings)
            Restore file settings.php
 
          run-tests

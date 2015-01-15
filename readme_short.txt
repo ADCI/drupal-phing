@@ -22,7 +22,7 @@ Short list of commands
 
   Drupal commands
     cc                                                   Clear all Drupal cache
-    settings-file-restore (settings)                     Restore file settings.php
+    restore-settings-file (settings)                     Restore file settings.php
     run-tests                                            Run standard Drupal test
     run-custom-tests -Dp=port                            Run custom tests specified in project.tests environment variable
     jmeter-tests                                         Run Jmeter tests from 'jmeter' directory

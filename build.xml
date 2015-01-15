@@ -30,7 +30,7 @@
   </if>
 
   <!-- Build/rebuild whole site. -->
-  <target name="build" depends="drush-make, settings-file-restore, drushrc-file-copy, site-install" />
+  <target name="build" depends="drush-make, restore-settings-file, drushrc-file-copy, site-install" />
 
   <target name="drush-make" depends="clear">
     <echo msg="Drupal make run" />
@@ -111,7 +111,7 @@
   </target>
 
   <target name="project-up" description="Build project">
-    <phingcall target="settings-file-restore" />
+    <phingcall target="restore-settings-file" />
     <phingcall target="drushrc-file-copy" />
     <phingcall target="git-submodule-update" />
     <if>
