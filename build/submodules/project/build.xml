@@ -9,13 +9,16 @@
   </target>
 
   <target name="deploy-production">
-    <phingcall target="dump-production" />
+    <!-- Save database dump before any changes made. -->
+    <phingcall target="dump-local" />
     <phingcall target="do-deploy">
       <property name="server" value="production" override="true" />
     </phingcall>
     <phingcall target="slack-message">
       <property name="slack.text" value="Deploy on ${project.production_url} has been finished." override="true" />
     </phingcall>
+    <!-- Save database dump so everybody can get fresh copy. -->
+    <phingcall target="dump-production" />
   </target>
 
   <!-- The only real deploy is deploy on production server. -->
