@@ -44,7 +44,7 @@
     </phingcall>
   </target>
 
-  <target name="backup-database">
+  <target name="backup-database" depends="db-backup-dir-create">
     <!-- No need to clear cache. We do not dump content of cache tables anyway. -->
     <!-- <phingcall target="cc"/> -->
     <tstamp />
