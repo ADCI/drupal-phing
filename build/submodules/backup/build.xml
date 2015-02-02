@@ -51,6 +51,7 @@
     <property name="backup_name" value="${DSTAMP}-${TSTAMP}.sql" />
     <drush command="sql-dump" assume="yes">
       <option name="root">${project.drupal.dir}</option>
+      <option name="uri">${project.drupal.uri}</option>
       <option name="gzip"></option>
       <option name="result-file">${env.backup.db.dir}/${backup_name}</option>
       <option name="structure-tables-key">common</option>
@@ -183,6 +184,7 @@
     </if>
     <drush command="node-export-export">
       <option name="root">${project.drupal.dir}</option>
+      <option name="uri">${project.drupal.uri}</option>
       <param>--file=${env.backup.dir}/nodes/nodes</param>
       <param>--format=xml</param>
     </drush>

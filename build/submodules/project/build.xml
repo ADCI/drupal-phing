@@ -48,6 +48,7 @@
     </phingcall>
     <drush command="check-test-data">
       <option name="root">${project.drupal.dir}</option>
+      <option name="uri">${project.drupal.uri}</option>
     </drush>
   </target>
 
@@ -76,12 +77,14 @@
         <echo msg="Run Simpletests" />
         <drush command="en" assume="yes">
           <option name="root">${project.drupal.dir}</option>
+          <option name="uri">${project.drupal.uri}</option>
           <param>simpletest</param>
         </drush>
         <drush command="test-run" assume="yes">
           <param>-l http://127.0.0.1:${p}</param>
           <param>${project.tests}</param>
           <option name="root">${project.drupal.dir}</option>
+          <option name="uri">${project.drupal.uri}</option>
           <option name="xml">${env.testsuite.dir}</option>
         </drush>
       </then>

@@ -3,6 +3,10 @@
 project.production_url=http://site.com
 project.stage_url=http://stage.com
 
+; This property indicate for which subsite to run drush command.
+; If you don't use Drupal's multisiting then just leave it empty.
+project.drupal.uri=
+
 ; Name of make file to use.
 project.make.name=standart
 project.make.file=build/make/${project.make.name}/build.make

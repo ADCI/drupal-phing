@@ -44,6 +44,8 @@
   <target name="drush-make" depends="clear">
     <echo msg="Drupal make run" />
     <drush command="make" assume="yes">
+      <option name="root">${project.drupal.dir}</option>
+      <option name="uri">${project.drupal.uri}</option>
       <param>${project.make.file}</param>
       <param>${project.drupal.dir}</param>
     </drush>
@@ -74,6 +76,7 @@
   <target name="drush-install">
     <drush command="site-install" assume="yes">
       <option name="root">${project.drupal.dir}</option>
+      <option name="uri">${project.drupal.uri}</option>
       <option name="db-url">${env.db.driver}://${env.db.user}:${env.db.password}@${env.db.host}/${env.db.name}</option>
       <option name="db-su">${env.db.user.sudo}</option>
       <option name="db-su-pw">${env.db.user.sudo.password}</option>

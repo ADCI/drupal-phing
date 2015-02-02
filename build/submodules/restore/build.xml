@@ -95,6 +95,7 @@
       <then>
         <drush command="migrate-auto-register">
           <option name="root">${project.drupal.dir}</option>
+          <option name="uri">${project.drupal.uri}</option>
         </drush>
         <phingcall target="migrate-import" >
           <property name="drupal.migrate" value="IssueListNodes" />
@@ -125,6 +126,7 @@
   <target name="migrate-import">
     <drush command="migrate-import">
       <option name="root">${project.drupal.dir}</option>
+      <option name="uri">${project.drupal.uri}</option>
       <param>${drupal.migrate}</param>
     </drush>
   </target>
@@ -148,6 +150,7 @@
   <target name="feature-apply">
     <drush command="features-revert" assume="yes">
       <option name="root">${project.drupal.dir}</option>
+      <option name="uri">${project.drupal.uri}</option>
       <param>${fe}</param>
     </drush>
   </target>
