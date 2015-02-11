@@ -8,14 +8,26 @@
     <phingcall target="features-apply" />
   </target>
 
+  <target name="deploy-get-author">
+    <if>
+      <not>
+        <isset property="by" />
+      </not>
+      <then>
+        <property name="by" value="" override="true" />
+      </then>
+    </if>
+  </target>
+
   <target name="deploy-production">
     <!-- Save database dump before any changes made. -->
     <phingcall target="dump-local" />
     <phingcall target="do-deploy">
       <property name="server" value="production" override="true" />
     </phingcall>
+    <phingcall target="deploy-get-author" />
     <phingcall target="slack-message">
-      <property name="slack.text" value="Deploy on ${project.production_url} has been finished." override="true" />
+      <property name="slack.text" value="Deploy on ${project.production_url} has been finished(${by})." override="true" />
     </phingcall>
     <!-- Save database dump so everybody can get fresh copy. -->
     <phingcall target="dump-production" />
