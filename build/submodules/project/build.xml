@@ -29,8 +29,6 @@
     <phingcall target="do-deploy">
       <property name="server" value="stage" override="true" />
     </phingcall>
-
-    <echo msg="${author}" />
     <phingcall target="slack-message">
       <property name="author" value="" />
       <property name="slack.text" value="Deploy on ${project.stage_url} has been finished. Performed by ${author}." override="true" />
