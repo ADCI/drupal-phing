@@ -11,10 +11,10 @@
   <target name="deploy-get-author">
     <if>
       <not>
-        <isset property="by" />
+        <isset property="author" />
       </not>
       <then>
-        <property name="by" value="" override="true" />
+        <property name="author" value="" override="true" />
       </then>
     </if>
   </target>
@@ -27,7 +27,7 @@
     </phingcall>
     <phingcall target="deploy-get-author" />
     <phingcall target="slack-message">
-      <property name="slack.text" value="Deploy on ${project.production_url} has been finished(${by})." override="true" />
+      <property name="slack.text" value="Deploy on ${project.production_url} has been finished. Performed by ${author}." override="true" />
     </phingcall>
     <!-- Save database dump so everybody can get fresh copy. -->
     <phingcall target="dump-production" />
