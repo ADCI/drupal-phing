@@ -203,16 +203,16 @@
   </target>
 
   <target name="devel-output-for-all">
-    <echo msg="Enable access developer information for all user roles" />
-    <drush command="sql-query">
-      <param>"INSERT INTO role_permission VALUES (1,'access devel information','devel')"</param>
+    <echo msg="Enable all user roles to access developer information." />
+    <drush command="php-eval">
       <option name="root">${project.drupal.dir}</option>
       <option name="uri">${project.drupal.uri}</option>
+      <param><![CDATA['$rid = 1; $perm = "access devel information"; $params = array("rid" => $rid, "permission" => $perm, "module" => "devel"); db_merge("role_permission")->fields($params)->key(array("rid" => $rid, "permission" => $perm))->execute();']]></param>
     </drush>
-    <drush command="sql-query">
-      <param>"INSERT INTO role_permission VALUES (2,'access devel information','devel')"</param>
+    <drush command="php-eval">
       <option name="root">${project.drupal.dir}</option>
       <option name="uri">${project.drupal.uri}</option>
+      <param><![CDATA['$rid = 2; $perm = "access devel information"; $params = array("rid" => $rid, "permission" => $perm, "module" => "devel"); db_merge("role_permission")->fields($params)->key(array("rid" => $rid, "permission" => $perm))->execute();']]></param>
     </drush>
   </target>
 
