@@ -9,6 +9,10 @@
   </target>
 
   <target name="deploy-production">
+    <phingcall target="slack-message" >
+      <property name="author" value="" />
+      <property name="slack.text" value="Performing deploy on ${project.production_url}." override="true" />
+    </phingcall>
     <!-- Save database dump before any changes made. -->
     <phingcall target="dump-local" />
     <phingcall target="do-deploy">
