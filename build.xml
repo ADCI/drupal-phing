@@ -185,17 +185,4 @@
     <echo msg="${readme}" />
   </target>
 
-  <target name="send-request">
-    <if>
-      <isset property="task" />
-      <then>
-        <property name="url" value="http://clients.adciserver.com:8080/job/" />
-        <http-request url="${url}${task}/build?token=${task}" />
-      </then>
-      <else>
-        <echo msg='You should add task name. Use command line option "-Dtask=task name"'/>
-      </else>
-    </if>
-  </target>
-  
 </project>
