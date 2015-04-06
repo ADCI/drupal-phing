@@ -30,6 +30,10 @@
   <target name="deploy" depends="deploy-production" />
 
   <target name="deploy-stage">
+    <phingcall target="slack-message" >
+      <property name="author" value="" />
+      <property name="slack.text" value="Performing deploy on ${project.stage_url}." override="true" />
+    </phingcall>
     <phingcall target="do-deploy">
       <property name="server" value="stage" override="true" />
     </phingcall>
