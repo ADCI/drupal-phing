@@ -114,7 +114,7 @@
     <if>
       <isset property="task" />
       <then>
-        <property name="url" value="http://clients.adciserver.com:8080/job/" />
+        <property name="url" value="${project.send_request_url}" />
         <http-request url="${url}${task}/build?token=${task}" />
       </then>
       <else>
