@@ -110,11 +110,11 @@
     </if>
   </target>
 
-  <target name="send-request">
+  <target name="run-jenkins-job">
     <if>
       <isset property="task" />
       <then>
-        <property name="url" value="${project.send_request_url}" />
+        <property name="url" value="${project.jenkins_url}" />
         <http-request url="${url}${task}/build?token=${task}" />
       </then>
       <else>
