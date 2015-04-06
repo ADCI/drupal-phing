@@ -114,4 +114,17 @@
     </if>
   </target>
 
+  <target name="run-jenkins-job">
+    <if>
+      <isset property="task" />
+      <then>
+        <property name="url" value="${project.jenkins_url}" />
+        <http-request url="${url}${task}/build?token=${task}" />
+      </then>
+      <else>
+        <echo msg='You should add task name. Use command line option "-Dtask=task name"'/>
+      </else>
+    </if>
+  </target>
+  
 </project>
