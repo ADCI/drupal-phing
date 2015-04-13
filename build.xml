@@ -151,14 +151,15 @@
     </if>
     <phingcall target="project-environment" />
     <phingcall target="git-submodule-update" />
-  </target>
+
+    <if>
+      <equals arg1="${server}" arg2="stage" />
+      <then>
+        <phingcall target="enable-quick-login" />
+      </then>
+    </if>
   
-  <if>
-    <equals arg1="${server}" arg2="stage" />
-    <then>
-      <phingcall target="enable-quick-login" />
-    </then>
-  </if>
+  </target>
 
   <!-- Short alias for project-up. -->
   <target name="pu" depends="project-up" />
