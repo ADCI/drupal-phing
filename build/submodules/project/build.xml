@@ -117,4 +117,10 @@
     </if>
   </target>
 
+  <target name="enable-quick-login">
+    <phingcall target="modules-enable">
+      <property name="projects.installable" value="quick_login" />
+    </phingcall>
+  </target>
+
 </project>
