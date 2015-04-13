@@ -9,13 +9,18 @@
   </target>
 
   <target name="deploy-production">
+    <phingcall target="slack-message" >
+      <property name="author" value="" />
+      <property name="slack.text" value="Performing deploy on ${project.production_url}." override="true" />
+    </phingcall>
     <!-- Save database dump before any changes made. -->
     <phingcall target="dump-local" />
     <phingcall target="do-deploy">
       <property name="server" value="production" override="true" />
     </phingcall>
-    <phingcall target="slack-message">
-      <property name="slack.text" value="Deploy on ${project.production_url} has been finished." override="true" />
+    <phingcall target="slack-message" >
+      <property name="author" value="" />
+      <property name="slack.text" value="Deploy on ${project.production_url} has been finished. Performed by ${author}." override="true" />
     </phingcall>
     <!-- Save database dump so everybody can get fresh copy. -->
     <phingcall target="dump-production" />
@@ -25,11 +30,16 @@
   <target name="deploy" depends="deploy-production" />
 
   <target name="deploy-stage">
+    <phingcall target="slack-message" >
+      <property name="author" value="" />
+      <property name="slack.text" value="Performing deploy on ${project.stage_url}." override="true" />
+    </phingcall>
     <phingcall target="do-deploy">
       <property name="server" value="stage" override="true" />
     </phingcall>
     <phingcall target="slack-message">
-      <property name="slack.text" value="Deploy on ${project.stage_url} has been finished." override="true" />
+      <property name="author" value="" />
+      <property name="slack.text" value="Deploy on ${project.stage_url} has been finished. Performed by ${author}." override="true" />
     </phingcall>
     <phingcall target="dump-stage" />
   </target>
@@ -66,32 +76,19 @@
         </phingcall>
       </then>
     </if>
-    <if>
-      <and>
-        <isset property="p" />
-        <not>
-          <equals arg1="${p}" arg2="" />
-        </not>
-      </and>
-      <then>
-        <echo msg="Run Simpletests" />
-        <drush command="en" assume="yes">
-          <option name="root">${project.drupal.dir}</option>
-          <option name="uri">${project.drupal.uri}</option>
-          <param>simpletest</param>
-        </drush>
-        <drush command="test-run" assume="yes">
-          <param>-l http://127.0.0.1:${p}</param>
-          <param>${project.tests}</param>
-          <option name="root">${project.drupal.dir}</option>
-          <option name="uri">${project.drupal.uri}</option>
-          <option name="xml">${env.testsuite.dir}</option>
-        </drush>
-      </then>
-      <else>
-        <echo msg='You should add port. Use argument -Dp=port_here.' />
-      </else>
-    </if>
+
+    <echo msg="Making sure Simpletest module is enabled." />
+    <phingcall target="modules-enable">
+      <property name="projects.installable" value="simpletest" />
+    </phingcall>
+
+    <echo msg="Runing Simpletest tests." />
+    <drush command="test-run" assume="yes">
+      <param>${project.tests}</param>
+      <option name="root">${project.drupal.dir}</option>
+      <option name="uri">${project.drupal.uri}</option>
+      <option name="xml">${env.testsuite.dir}</option>
+    </drush>
   </target>
 
   <target name="testsuite-dir-init">
@@ -121,6 +118,19 @@
     <phingcall target="modules-enable">
       <property name="projects.installable" value="quick_login" />
     </phingcall>
+  </target>
+
+  <target name="run-jenkins-job">
+    <if>
+      <isset property="task" />
+      <then>
+        <property name="url" value="${project.jenkins_url}" />
+        <http-request url="${url}${task}/build?token=${task}" />
+      </then>
+      <else>
+        <echo msg='You should add task name. Use command line option "-Dtask=task name"'/>
+      </else>
+    </if>
   </target>
 
 </project>
