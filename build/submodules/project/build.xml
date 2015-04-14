@@ -4,6 +4,8 @@
     <phingcall target="pull" />
     <phingcall target="restore-settings-file" />
     <phingcall target="drushrc-file-copy" />
+    <!-- TODO: We should add common target for things like this. -->
+    <phingcall target="toggle-quick-login" />
     <phingcall target="updatedb" />
     <phingcall target="features-apply" />
   </target>
@@ -114,10 +116,23 @@
     </if>
   </target>
 
-  <target name="enable-quick-login">
-    <phingcall target="modules-enable">
-      <property name="projects.installable" value="quick_login" />
-    </phingcall>
+  <target name="toggle-quick-login">
+    <if>
+      <or>
+        <equals arg1="${server}" arg2="stage" />
+        <equals arg1="${server}" arg2="local" />
+      </or>
+      <then>
+        <phingcall target="modules-enable">
+          <property name="projects.installable" value="quick_login" />
+        </phingcall>
+      </then>
+      <else>
+        <phingcall target="modules-disable">
+          <property name="projects.disable" value="quick_login" />
+        </phingcall>
+      </else>
+    </if>
   </target>
 
   <target name="run-jenkins-job">

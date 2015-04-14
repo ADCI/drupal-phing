@@ -150,15 +150,8 @@
       </else>
     </if>
     <phingcall target="project-environment" />
+    <phingcall target="toggle-quick-login" />
     <phingcall target="git-submodule-update" />
-
-    <if>
-      <equals arg1="${server}" arg2="stage" />
-      <then>
-        <phingcall target="enable-quick-login" />
-      </then>
-    </if>
-  
   </target>
 
   <!-- Short alias for project-up. -->
