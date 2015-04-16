@@ -124,6 +124,7 @@
 
   <target name="project-up" description="Build project">
     <phingcall target="restore-settings-file" />
+    <phingcall target="restore-robots-file" />
     <phingcall target="drushrc-file-copy" />
     <phingcall target="git-submodule-update" />
     <if>

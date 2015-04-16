@@ -141,6 +141,27 @@
       </filterchain>
     </copy>
   </target>
+  
+  <target name="restore-robots-file" description="Restore robots.txt">
+    <echo msg="Restore robots.php" />
+    <phingcall target="delete-robots-file" />
+    <phingcall target="copy-robots-file" />
+  </target>
+
+  <target name="delete-robots-file" description="Delete file if it exists">
+    <if>
+      <available file="${project.drupal.dir}/robots.txt" />
+      <then>
+        <delete file="${project.drupal.dir}/robots.txt" quiet="true" />
+        <echo msg="Delete robots.txt file" />
+      </then>
+    </if>
+  </target>
+
+  <target name="copy-robots-file" description="Copy file if it exists">
+    <echo msg="Copy file robots.php" />
+    <copy file="${project.drupal.robots.dir}/robots.txt" tofile="${project.drupal.dir}/robots.txt" overwrite="true" haltonerror="false"/>
+  </target>
 
   <target name="drushrc-file-copy">
     <if>

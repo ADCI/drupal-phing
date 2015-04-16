@@ -19,6 +19,7 @@ project.drupal.custom.dir=${project.drupal.dir}/sites/all/modules/custom
 project.drupal.features.dir=${project.drupal.dir}/sites/all/modules/features
 project.drupal.default.dir=${project.drupal.dir}/sites/default
 project.drupal.settings.dir=${project.drupal.default.dir}
+project.drupal.robots.dir = ${env.project.dir}/robots-file
 project.drupal.files.dir=${project.drupal.default.dir}/files
 project.drupal.theme.dir=${project.drupal.dir}/sites/all/themes
 project.drupal.settings.file=settings.php
