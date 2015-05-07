@@ -17,7 +17,7 @@
   <target name="p" depends="push" />
 
   <target name="commit">
-    <phingcall target="check-m" />
+    <phingcall target="check-message" />
     <phingcall target="git-add-all-s" />
     <phingcall target="git-commit-s" />
     <phingcall target="git-add-all" />
@@ -29,7 +29,7 @@
 
   <!-- Combine power of both pull and push in one single command! -->
   <target name="pull-push">
-    <phingcall target="check-m" />
+    <phingcall target="check-message" />
     <phingcall target="pull" />
     <!-- TODO: exit if failed -->
     <phingcall target="commit" />
@@ -89,7 +89,7 @@
   </target>
 
   <target name="git-commit">
-    <phingcall target="check-m" />
+    <phingcall target="check-message" />
     <!-- <phingcall target="sniff-commit" /> -->
     <echo msg="Git commit" />
     <property name="git.directory" value="${env.project.dir}" />
@@ -127,7 +127,7 @@
           <property name="git.branch" value="${repo.submodules.modules.branch}" override="true" />
         </phingcall>
       </then>
-    </if>    
+    </if>
   </target>
 
   <target name="git-pull">
@@ -157,7 +157,7 @@
           <property name="git.directory" value="${repo.submodules.modules.dir}" override="true" />
           <property name="git.branch" value="${repo.submodules.modules.branch}" override="true" />
         </phingcall>
-      </then>  
+      </then>
     </if>
   </target>
 
@@ -184,7 +184,7 @@
     </phingcall>
   </target>
 
-  <target name="check-m">
+  <target name="check-message">
     <if>
       <or>
         <not>
@@ -262,6 +262,43 @@
         <exec command="git diff --cached --name-only --diff-filter=ACRM" outputProperty="repo.commit-files" />
         <foreach list="${repo.commit-files}" param="env.codesniffer.sniff" target="sniff" delimiter="${line.separator}" />
       </then>
+    </if>
+  </target>
+
+  <target name="check-conflicts">
+    <echo msg="Scaning repository for conflicts." />
+    <exec command="git ls-files --unmerged | wc -l" outputProperty="conflicts-count" passthru="false" checkreturn="true" />
+    <if>
+      <not>
+        <equals arg1="${conflicts-count}" arg2="0" />
+      </not>
+      <then>
+        <echo msg="There are ${conflicts-count} files marked as unmerged." />
+        <phingcall target="scan-diff-for-conflicts" />
+      </then>
+      <else>
+        <echo msg="No unmerged files found." />
+      </else>
+    </if>
+  </target>
+
+  <target name="scan-diff-for-conflicts">
+    <echo msg="Checking if there are any conflict marks left inside unmerged files." />
+    <property name="command">
+      <![CDATA[git diff | grep '<<<<' | wc -l]]>
+    </property>
+    <exec command="${command}" outputProperty="unresolved-count" passthru="false" checkreturn="true" />
+    <if>
+      <not>
+        <equals arg1="${unresolved-count}" arg2="0" />
+      </not>
+      <then>
+        <echo msg="There are still ${unresolved-count} unresolved conflicts. Please resolve them before commiting anything." level="error" />
+        <php expression="exit();" />
+      </then>
+      <else>
+        <echo msg="It seems all conflicts have been resolved." />
+      </else>
     </if>
   </target>
 
