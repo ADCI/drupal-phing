@@ -18,6 +18,7 @@
 
   <target name="commit">
     <phingcall target="check-message" />
+    <phingcall target="check-conflicts" />
     <phingcall target="git-add-all-s" />
     <phingcall target="git-commit-s" />
     <phingcall target="git-add-all" />
@@ -266,26 +267,18 @@
   </target>
 
   <target name="check-conflicts">
-    <echo msg="Scaning repository for conflicts." />
-    <exec command="git ls-files --unmerged | wc -l" outputProperty="conflicts-count" passthru="false" checkreturn="true" />
     <if>
-      <not>
-        <equals arg1="${conflicts-count}" arg2="0" />
-      </not>
+      <equals arg1="${repo.check-conflicts}" arg2="true" />
       <then>
-        <echo msg="There are ${conflicts-count} files marked as unmerged." />
         <phingcall target="scan-diff-for-conflicts" />
       </then>
-      <else>
-        <echo msg="No unmerged files found." />
-      </else>
     </if>
   </target>
 
   <target name="scan-diff-for-conflicts">
-    <echo msg="Checking if there are any conflict marks left inside unmerged files." />
+    <echo msg="Checking if there are any unmerged files with conflict marks left inside them." />
     <property name="command">
-      <![CDATA[git diff | grep '<<<<' | wc -l]]>
+      <![CDATA[git diff --diff-filter=U | grep '+<<<<<<< HEAD' | wc -l]]>
     </property>
     <exec command="${command}" outputProperty="unresolved-count" passthru="false" checkreturn="true" />
     <if>
@@ -294,12 +287,29 @@
       </not>
       <then>
         <echo msg="There are still ${unresolved-count} unresolved conflicts. Please resolve them before commiting anything." level="error" />
-        <php expression="exit();" />
+        <if>
+          <or>
+            <isset property="force"/>
+            <not>
+              <equals arg1="${repo.fail-when-conflict}" arg2="true" />
+            </not>
+          </or>
+          <then>
+            <echo msg="Forcing commit with unresolved conflicts." level="error" />
+          </then>
+          <else>
+            <php expression="exit();" />
+          </else>
+        </if>
       </then>
       <else>
-        <echo msg="It seems all conflicts have been resolved." />
+        <echo msg="No unresolved conflicts found." />
       </else>
     </if>
+  </target>
+
+  <target name="show-conflicts">
+    <exec command="git diff --diff-filter=U" checkreturn="false" />
   </target>
 
 </project>

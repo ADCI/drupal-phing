@@ -6,3 +6,7 @@ repo.autosniff=false
 repo.submodules.modules.repo=
 repo.submodules.modules.dir=
 repo.submodules.modules.branch=
+
+; Settings for checking conflicts.
+repo.check-conflicts=true
+repo.fail-when-conflict=true
