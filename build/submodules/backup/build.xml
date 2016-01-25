@@ -47,7 +47,9 @@
   <target name="backup-database" depends="db-backup-dir-create">
     <!-- No need to clear cache. We do not dump content of cache tables anyway. -->
     <!-- <phingcall target="cc"/> -->
-    <tstamp />
+    <tstamp>
+      <format property="TSTAMP" pattern="%H%M%S" />
+    </tstamp>
     <property name="backup_name" value="${DSTAMP}-${TSTAMP}.sql" />
     <drush command="sql-dump" assume="yes">
       <option name="root">${project.drupal.dir}</option>
@@ -153,7 +155,9 @@
   </target>
 
   <target name="backup-project-files" depends="files-backup-dir-create">
-    <tstamp />
+    <tstamp>
+      <format property="TSTAMP" pattern="%H%M%S" />
+    </tstamp>
     <property name="backup_name" value="files-${DSTAMP}-${TSTAMP}.tar.gz" />
     <property name="backup_file" value="${env.backup.files.dir}/${backup_name}" />
     <echo msg="${env.backup.files.include}" />
